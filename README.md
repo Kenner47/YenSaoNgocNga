@@ -26,15 +26,15 @@ The platform follows a **decoupled architecture** between the backend and fronte
 
 ## 🧱 Architecture Overview
 
-> Frontend (ASP.NET Core MVC)
+> 🖥️ Frontend (ASP.NET Core MVC)
 >
-> ⇅ HttpClient
+>    ⬇️⬆️ HttpClient
 >
-> Backend (ASP.NET Core Web API)
+> 🛠️ Backend (ASP.NET Core Web API)
 >
-> ⇅ EF Core (Code First)
+>    ⬇️⬆️ EF Core (Code First)
 >
->Database (PostgreSQL)
+> 🗄️ Database (PostgreSQL)
 
 ---
 
