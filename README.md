@@ -15,7 +15,7 @@ The platform follows a **decoupled architecture** between the backend and fronte
 - ✅ **JWT Authentication** – Secure and stateless user login
 - ✅ **Swagger UI** – Interactive API documentation and testing
 
-> ### 🎨 Frontend (MVC Web App)
+### 🎨 Frontend (MVC Web App)
 
 - 🎯 **ASP.NET Core MVC**
 - 🎯 **Razor Pages** – For clean and dynamic view rendering
@@ -24,9 +24,9 @@ The platform follows a **decoupled architecture** between the backend and fronte
 
 ---
 
-> ## 🧱 Architecture Overview
+## 🧱 Architecture Overview
 
-Frontend (ASP.NET Core MVC)
+> Frontend (ASP.NET Core MVC)
 ⇅ HttpClient
 Backend (ASP.NET Core Web API)
 ⇅ EF Core (Code First)
