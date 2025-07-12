@@ -1,6 +1,6 @@
 # 🕊️ Yến Sào Ngọc Nga
 
-**Yen Sao Ngoc Nga** is a modern e-commerce website that specializes in **premium bird's nest products**, designed to promote health and wellness for consumers.  
+> **Yen Sao Ngoc Nga** is a modern e-commerce website that specializes in **premium bird's nest products**, designed to promote health and wellness for consumers.  
 The platform follows a **decoupled architecture** between the backend and frontend, ensuring **scalability**, **maintainability**, and **clean code separation**.
 
 ---
@@ -15,7 +15,7 @@ The platform follows a **decoupled architecture** between the backend and fronte
 - ✅ **JWT Authentication** – Secure and stateless user login
 - ✅ **Swagger UI** – Interactive API documentation and testing
 
-### 🎨 Frontend (MVC Web App)
+> ### 🎨 Frontend (MVC Web App)
 
 - 🎯 **ASP.NET Core MVC**
 - 🎯 **Razor Pages** – For clean and dynamic view rendering
@@ -24,7 +24,7 @@ The platform follows a **decoupled architecture** between the backend and fronte
 
 ---
 
-## 🧱 Architecture Overview
+> ## 🧱 Architecture Overview
 
 Frontend (ASP.NET Core MVC)
 ⇅ HttpClient
