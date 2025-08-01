@@ -6,8 +6,8 @@ namespace UserManagement_API.Services.IService
     {
         Task<IEnumerable<RoleDto>> GetAllRolesAsync();
         Task<RoleDto?> GetRoleByIdAsync(int id);
-        Task<RoleDto> CreateRoleAsync(CreateRoleDto createRoleDto);
-        Task<RoleDto?> UpdateRoleAsync(int id, UpdateRoleDto updateRoleDto);
+        Task<RoleDto> CreateRoleAsync(RoleDto roleDto);
+        Task<RoleDto?> UpdateRoleAsync(int id, RoleDto roleDto);
         Task<bool> DeleteRoleAsync(int id);
     }
 }

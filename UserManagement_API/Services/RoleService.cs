@@ -37,17 +37,11 @@ namespace UserManagement_API.Services
             };
         }
 
-        public async Task<RoleDto> CreateRoleAsync(CreateRoleDto createRoleDto)
+        public async Task<RoleDto> CreateRoleAsync(RoleDto roleDto)
         {
-            // Check if role name already exists
-            if (await _roleRepository.RoleNameExistsAsync(createRoleDto.RoleName))
-            {
-                throw new InvalidOperationException($"Role name '{createRoleDto.RoleName}' already exists.");
-            }
-
             var role = new Role
             {
-                RoleName = createRoleDto.RoleName
+                RoleName = roleDto.RoleName
             };
 
             var createdRole = await _roleRepository.CreateAsync(role);
@@ -59,24 +53,15 @@ namespace UserManagement_API.Services
             };
         }
 
-        public async Task<RoleDto?> UpdateRoleAsync(int id, UpdateRoleDto updateRoleDto)
+        public async Task<RoleDto?> UpdateRoleAsync(int id, RoleDto roleDto)
         {
-            // Check if role exists
-            if (!await _roleRepository.ExistsAsync(id))
-                return null;
-
-            // Check if new role name already exists (excluding current role)
-            if (await _roleRepository.RoleNameExistsAsync(updateRoleDto.RoleName, id))
-            {
-                throw new InvalidOperationException($"Role name '{updateRoleDto.RoleName}' already exists.");
-            }
-
             var role = new Role
             {
-                RoleName = updateRoleDto.RoleName
+                RoleId = id,
+                RoleName = roleDto.RoleName
             };
 
-            var updatedRole = await _roleRepository.UpdateAsync(id, role);
+            var updatedRole = await _roleRepository.UpdateAsync(role);
             if (updatedRole == null)
                 return null;
 

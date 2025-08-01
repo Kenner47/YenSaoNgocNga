@@ -30,15 +30,13 @@ namespace UserManagement_API.Repositories
             return role;
         }
 
-        public async Task<Role?> UpdateAsync(int id, Role role)
+        public async Task<Role?> UpdateAsync(Role role)
         {
-            var existingRole = await _context.Role.FindAsync(id);
+            var existingRole = await _context.Role.FindAsync(role.RoleId);
             if (existingRole == null)
                 return null;
 
-            existingRole.RoleName = role.RoleName;
-
-            _context.Role.Update(existingRole);
+            _context.Entry(existingRole).CurrentValues.SetValues(role);
             await _context.SaveChangesAsync();
             return existingRole;
         }
@@ -57,11 +55,6 @@ namespace UserManagement_API.Repositories
         public async Task<bool> ExistsAsync(int id)
         {
             return await _context.Role.AnyAsync(r => r.RoleId == id);
-        }
-
-        public async Task<bool> RoleNameExistsAsync(string roleName, int? excludeId = null)
-        {
-            return await _context.Role.AnyAsync(r => r.RoleName == roleName && (excludeId == null || r.RoleId != excludeId));
         }
     }
 }

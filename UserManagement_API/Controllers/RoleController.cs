@@ -15,112 +15,54 @@ namespace UserManagement_API.Controllers
             _roleService = roleService;
         }
 
-        // GET: api/Role
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RoleDto>>> GetAllRoles()
         {
-            try
-            {
-                var roles = await _roleService.GetAllRolesAsync();
-                return Ok(roles);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Internal server error", details = ex.Message });
-            }
+            var roles = await _roleService.GetAllRolesAsync();
+            return Ok(roles);
         }
 
-        // GET: api/Role/5
         [HttpGet("{id}")]
         public async Task<ActionResult<RoleDto>> GetRole(int id)
         {
-            try
-            {
-                var role = await _roleService.GetRoleByIdAsync(id);
-                if (role == null)
-                {
-                    return NotFound(new { message = $"Role with ID {id} not found." });
-                }
+            var role = await _roleService.GetRoleByIdAsync(id);
+            if (role == null)
+                return NotFound($"Role with ID {id} not found.");
 
-                return Ok(role);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Internal server error", details = ex.Message });
-            }
+            return Ok(role);
         }
 
-        // POST: api/Role
         [HttpPost]
-        public async Task<ActionResult<RoleDto>> CreateRole(CreateRoleDto createRoleDto)
+        public async Task<ActionResult<RoleDto>> CreateRole(RoleDto roleDto)
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(createRoleDto.RoleName))
-                {
-                    return BadRequest(new { message = "Role name is required." });
-                }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-                var createdRole = await _roleService.CreateRoleAsync(createRoleDto);
-                return CreatedAtAction(nameof(GetRole), new { id = createdRole.RoleId }, createdRole);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Internal server error", details = ex.Message });
-            }
+            var createdRole = await _roleService.CreateRoleAsync(roleDto);
+            return CreatedAtAction(nameof(GetRole), new { id = createdRole.RoleId }, createdRole);
         }
 
-        // PUT: api/Role/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<RoleDto>> UpdateRole(int id, UpdateRoleDto updateRoleDto)
+        public async Task<ActionResult<RoleDto>> UpdateRole(int id, RoleDto roleDto)
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(updateRoleDto.RoleName))
-                {
-                    return BadRequest(new { message = "Role name is required." });
-                }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-                var updatedRole = await _roleService.UpdateRoleAsync(id, updateRoleDto);
-                if (updatedRole == null)
-                {
-                    return NotFound(new { message = $"Role with ID {id} not found." });
-                }
+            var updatedRole = await _roleService.UpdateRoleAsync(id, roleDto);
+            if (updatedRole == null)
+                return NotFound($"Role with ID {id} not found.");
 
-                return Ok(updatedRole);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Internal server error", details = ex.Message });
-            }
+            return Ok(updatedRole);
         }
 
-        // DELETE: api/Role/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRole(int id)
+        public async Task<ActionResult> DeleteRole(int id)
         {
-            try
-            {
-                var deleted = await _roleService.DeleteRoleAsync(id);
-                if (!deleted)
-                {
-                    return NotFound(new { message = $"Role with ID {id} not found." });
-                }
+            var result = await _roleService.DeleteRoleAsync(id);
+            if (!result)
+                return NotFound($"Role with ID {id} not found.");
 
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Internal server error", details = ex.Message });
-            }
+            return NoContent();
         }
     }
 }
