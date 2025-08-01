@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using UserManagement_API.Injection;
 
 namespace UserManagement_API
 {
@@ -15,6 +16,9 @@ namespace UserManagement_API
             // Register the DbContext with PostgreSql Server
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // ??ng ký DI cho service/repo
+            builder.Services.AddUserServices(builder.Configuration);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
