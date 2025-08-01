@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UserManagement_API.Helpers;
 using UserManagement_API.Repositories;
 using UserManagement_API.Repositories.IRepository;
 using UserManagement_API.Services;
@@ -13,11 +14,17 @@ namespace UserManagement_API.Injection
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
+            //PasswordHelper
+            services.AddScoped<PasswordHelper>();
+
             // Register repositories
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+
 
             // Register services
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IAuthService, AuthService>();
 
 
             return services;

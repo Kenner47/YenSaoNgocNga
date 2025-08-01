@@ -73,8 +73,8 @@ namespace UserManagement_API.Migrations
                 values: new object[,]
                 {
                     { 1, "System Address", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateOnly(1990, 1, 1), "admin@example.com", "System Administrator", true, "admin123", "0123456789", 1, "Male", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin" },
-                    { 2, "Employee Address", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateOnly(1992, 8, 20), "employee@example.com", "Company Employee", true, "emp123", "0555666777", 2, "Male", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), "employee" },
-                    { 3, "User Address", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateOnly(1995, 5, 15), "user@example.com", "Regular User", true, "user123", "0987654321", 3, "Female", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), "user" }
+                    { 2, "Employee 1 Address", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateOnly(1992, 8, 20), "employee1@example.com", "Company Employee", true, "emp123", "0555666777", 2, "Male", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), "employee1" },
+                    { 3, "Employee 2 Address", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateOnly(1995, 5, 15), "employee2@example.com", "Regular Employee", true, "emp123", "0987654321", 2, "Female", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), "employee2" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -136,10 +136,10 @@ namespace UserManagement_API.Migrations
                         new
                         {
                             UserId = 2,
-                            Address = "Employee Address",
+                            Address = "Employee 1 Address",
                             CreatedAt = new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             DateOfBirth = new DateOnly(1992, 8, 20),
-                            Email = "employee@example.com",
+                            Email = "employee1@example.com",
                             FullName = "Company Employee",
                             IsActive = true,
                             Password = "emp123",
@@ -147,23 +147,23 @@ namespace UserManagement_API.Migrations
                             RoleId = 2,
                             Sex = "Male",
                             UpdatedAt = new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Username = "employee"
+                            Username = "employee1"
                         },
                         new
                         {
                             UserId = 3,
-                            Address = "User Address",
+                            Address = "Employee 2 Address",
                             CreatedAt = new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             DateOfBirth = new DateOnly(1995, 5, 15),
-                            Email = "user@example.com",
-                            FullName = "Regular User",
+                            Email = "employee2@example.com",
+                            FullName = "Regular Employee",
                             IsActive = true,
-                            Password = "user123",
+                            Password = "emp123",
                             PhoneNumber = "0987654321",
-                            RoleId = 3,
+                            RoleId = 2,
                             Sex = "Female",
                             UpdatedAt = new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Username = "user"
+                            Username = "employee2"
                         });
                 });
 

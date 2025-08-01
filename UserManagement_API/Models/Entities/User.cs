@@ -30,7 +30,7 @@ namespace UserManagement_API.Models.Entities
 
         public string Sex { get; set; }
 
-        public int RoleId { get; set; }
+        public int RoleId { get; set; } // 1 = Admin, 2 = Employee, 3 = User.
 
         [ForeignKey("RoleId")]
         public Role Role { get; set; }

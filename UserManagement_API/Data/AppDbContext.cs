@@ -40,12 +40,12 @@ public class AppDbContext : DbContext
             new User
             {
                 UserId = 2,
-                Username = "employee",
+                Username = "employee1",
                 Password = "emp123",
                 FullName = "Company Employee",
-                Email = "employee@example.com",
+                Email = "employee1@example.com",
                 PhoneNumber = "0555666777",
-                Address = "Employee Address",
+                Address = "Employee 1 Address",
                 DateOfBirth = new DateOnly(1992, 8, 20),
                 Sex = "Male",
                 RoleId = 2,
@@ -56,15 +56,15 @@ public class AppDbContext : DbContext
             new User
             {
                 UserId = 3,
-                Username = "user",
-                Password = "user123",
-                FullName = "Regular User",
-                Email = "user@example.com",
+                Username = "employee2",
+                Password = "emp123",
+                FullName = "Regular Employee",
+                Email = "employee2@example.com",
                 PhoneNumber = "0987654321",
-                Address = "User Address",
+                Address = "Employee 2 Address",
                 DateOfBirth = new DateOnly(1995, 5, 15),
                 Sex = "Female",
-                RoleId = 3,
+                RoleId = 2,
                 IsActive = true,
                 CreatedAt = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc),
                 UpdatedAt = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc)
