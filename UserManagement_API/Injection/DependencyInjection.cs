@@ -25,6 +25,8 @@ namespace UserManagement_API.Injection
             // Register services
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IEmailService, EmailService>();
+
 
 
             return services;

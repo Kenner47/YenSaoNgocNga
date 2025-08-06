@@ -34,6 +34,13 @@ namespace UserManagement_API.Repositories
             return user;
         }
 
+        public async Task<User> UpdateAsync(User user)
+        {
+            _context.User.Update(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
+
         public async Task<bool> ExistsByUsernameAsync(string username)
         {
             return await _context.User.AnyAsync(u => u.Username == username);
@@ -49,6 +56,43 @@ namespace UserManagement_API.Repositories
             return await _context.User
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.UserId == id);
+        }
+
+        public async Task<User?> GetByIdAsync(int id)
+        {
+            return await _context.User.FindAsync(id);
+        }
+
+        // OTP methods
+        public async Task SaveOtpAsync(string email, string otp)
+        {
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+            if (user != null)
+            {
+                user.Otp = otp;
+                user.OtpCreatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> VerifyOtpAsync(string email, string otp)
+        {
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null || user.Otp != otp)
+                return false;
+
+            if (user.OtpCreatedAt == null)
+                return false;
+
+            var elapsedTime = DateTime.UtcNow - user.OtpCreatedAt.Value;
+            return elapsedTime.TotalMinutes <= 5;
+        }
+
+        public async Task<(string? OtpCode, DateTime? OtpCreatedAt)> GetOtpInfoAsync(string email)
+        {
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+            return user != null ? (user.Otp, user.OtpCreatedAt) : (null, null);
         }
     }
 }

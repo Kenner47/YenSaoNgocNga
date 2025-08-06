@@ -86,6 +86,13 @@ namespace UserManagement_API.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Otp")
+                        .HasMaxLength(6)
+                        .HasColumnType("character varying(6)");
+
+                    b.Property<DateTime?>("OtpCreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(255)

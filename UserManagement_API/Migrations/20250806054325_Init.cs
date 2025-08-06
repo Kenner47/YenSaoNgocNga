@@ -43,6 +43,8 @@ namespace UserManagement_API.Migrations
                     Sex = table.Column<string>(type: "text", nullable: false),
                     RoleId = table.Column<int>(type: "integer", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    Otp = table.Column<string>(type: "character varying(6)", maxLength: 6, nullable: true),
+                    OtpCreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -69,12 +71,12 @@ namespace UserManagement_API.Migrations
 
             migrationBuilder.InsertData(
                 table: "User",
-                columns: new[] { "UserId", "Address", "CreatedAt", "DateOfBirth", "Email", "FullName", "IsActive", "Password", "PhoneNumber", "RoleId", "Sex", "UpdatedAt", "Username" },
+                columns: new[] { "UserId", "Address", "CreatedAt", "DateOfBirth", "Email", "FullName", "IsActive", "Otp", "OtpCreatedAt", "Password", "PhoneNumber", "RoleId", "Sex", "UpdatedAt", "Username" },
                 values: new object[,]
                 {
-                    { 1, "System Address", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateOnly(1990, 1, 1), "admin@example.com", "System Administrator", true, "admin123", "0123456789", 1, "Male", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin" },
-                    { 2, "Employee 1 Address", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateOnly(1992, 8, 20), "employee1@example.com", "Company Employee", true, "emp123", "0555666777", 2, "Male", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), "employee1" },
-                    { 3, "Employee 2 Address", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateOnly(1995, 5, 15), "employee2@example.com", "Regular Employee", true, "emp123", "0987654321", 2, "Female", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), "employee2" }
+                    { 1, "System Address", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateOnly(1990, 1, 1), "admin@example.com", "System Administrator", true, null, null, "admin123", "0123456789", 1, "Male", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin" },
+                    { 2, "Employee 1 Address", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateOnly(1992, 8, 20), "employee1@example.com", "Company Employee", true, null, null, "emp123", "0555666777", 2, "Male", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), "employee1" },
+                    { 3, "Employee 2 Address", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), new DateOnly(1995, 5, 15), "employee2@example.com", "Regular Employee", true, null, null, "emp123", "0987654321", 2, "Female", new DateTime(2025, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc), "employee2" }
                 });
 
             migrationBuilder.CreateIndex(

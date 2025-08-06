@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace UserManagement_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250801095450_Init")]
+    [Migration("20250806054325_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -88,6 +88,13 @@ namespace UserManagement_API.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Otp")
+                        .HasMaxLength(6)
+                        .HasColumnType("character varying(6)");
+
+                    b.Property<DateTime?>("OtpCreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Password")
                         .IsRequired()

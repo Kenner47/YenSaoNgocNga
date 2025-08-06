@@ -37,6 +37,12 @@ namespace UserManagement_API.Models.Entities
 
         public bool IsActive { get; set; } = true;
 
+        // OTP Properties
+        [StringLength(6)]
+        public string? Otp { get; set; }
+
+        public DateTime? OtpCreatedAt { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
