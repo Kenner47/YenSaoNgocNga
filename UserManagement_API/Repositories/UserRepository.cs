@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UserManagement_API.Models.DTOs;
 using UserManagement_API.Models.Entities;
 using UserManagement_API.Repositories.IRepository;
 
@@ -82,6 +83,77 @@ namespace UserManagement_API.Repositories
             return true;
         }
 
+        public async Task<IEnumerable<User>> SearchUsersAsync(string? keyword)
+        {
+            var query = _context.User.Include(u => u.Role).AsQueryable();
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                var searchTerm = keyword.ToLower();
+                query = query.Where(u =>
+                    u.Username.ToLower().Contains(searchTerm) ||
+                    u.FullName.ToLower().Contains(searchTerm) ||
+                    u.Email.ToLower().Contains(searchTerm));
+            }
+
+            return await query
+                .OrderByDescending(u => u.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<UserStatisticsDto> GetUserStatisticsAsync()
+        {
+            var now = DateTime.UtcNow;
+            var today = DateTime.SpecifyKind(now.Date, DateTimeKind.Utc);
+            var weekStart = DateTime.SpecifyKind(today.AddDays(-(int)today.DayOfWeek), DateTimeKind.Utc);
+            var monthStart = DateTime.SpecifyKind(new DateTime(now.Year, now.Month, 1), DateTimeKind.Utc);
+
+            // Basic counts
+            var totalUsers = await _context.User.CountAsync();
+            var activeUsers = await _context.User.CountAsync(u => u.IsActive);
+            var inactiveUsers = totalUsers - activeUsers;
+
+            // Users by Role
+            var adminCount = await _context.User.CountAsync(u => u.RoleId == 1);
+            var employeeCount = await _context.User.CountAsync(u => u.RoleId == 2);
+            var userCount = await _context.User.CountAsync(u => u.RoleId == 3);
+
+            // Users by Gender
+            var maleCount = await _context.User.CountAsync(u => u.Sex.ToLower() == "male" || u.Sex.ToLower() == "nam");
+            var femaleCount = await _context.User.CountAsync(u => u.Sex.ToLower() == "female" || u.Sex.ToLower() == "nữ" || u.Sex.ToLower() == "nu");
+            var otherCount = totalUsers - maleCount - femaleCount;
+
+            // Recent registrations
+            var todayRegistrations = await _context.User.CountAsync(u => u.CreatedAt >= today);
+            var thisWeekRegistrations = await _context.User.CountAsync(u => u.CreatedAt >= weekStart);
+            var thisMonthRegistrations = await _context.User.CountAsync(u => u.CreatedAt >= monthStart);
+
+            return new UserStatisticsDto
+            {
+                TotalUsers = totalUsers,
+                ActiveUsers = activeUsers,
+                InactiveUsers = inactiveUsers,
+                UsersByRole = new UsersByRoleDto
+                {
+                    AdminCount = adminCount,
+                    EmployeeCount = employeeCount,
+                    UserCount = userCount
+                },
+                UsersByGender = new UsersByGenderDto
+                {
+                    MaleCount = maleCount,
+                    FemaleCount = femaleCount,
+                    OtherCount = otherCount
+                },
+                RecentUsers = new RecentUsersDto
+                {
+                    TodayRegistrations = todayRegistrations,
+                    ThisWeekRegistrations = thisWeekRegistrations,
+                    ThisMonthRegistrations = thisMonthRegistrations
+                }
+            };
+        }
+
         // OTP methods
         public async Task SaveOtpAsync(string email, string otp)
         {
@@ -112,6 +184,33 @@ namespace UserManagement_API.Repositories
         {
             var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
             return user != null ? (user.Otp, user.OtpCreatedAt) : (null, null);
+        }
+
+        // RESET PASSWORD METHODS (reuse OTP fields)
+        public async Task SaveResetOtpAsync(string email, string otp)
+        {
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+            if (user != null)
+            {
+                user.Otp = otp;
+                user.OtpCreatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> VerifyResetOtpAsync(string email, string otp)
+        {
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null || user.Otp != otp)
+                return false;
+
+            if (user.OtpCreatedAt == null)
+                return false;
+
+            // Reset OTP có hiệu lực 15 phút
+            var elapsedTime = DateTime.UtcNow - user.OtpCreatedAt.Value;
+            return elapsedTime.TotalMinutes <= 15;
         }
     }
 }

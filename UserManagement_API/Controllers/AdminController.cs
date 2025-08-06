@@ -5,7 +5,7 @@ using UserManagement_API.Services.IService;
 
 namespace UserManagement_API.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class AdminController : ControllerBase
@@ -65,6 +65,20 @@ namespace UserManagement_API.Controllers
                 return NotFound($"User with ID {id} not found.");
 
             return Ok(new { message = "User deactivated successfully." });
+        }
+
+        [HttpGet("users/search")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> SearchUsers([FromQuery] string? keyword)
+        {
+            var users = await _userService.SearchUsersAsync(keyword);
+            return Ok(users);
+        }
+
+        [HttpGet("statistics")]
+        public async Task<ActionResult<UserStatisticsDto>> GetUserStatistics()
+        {
+            var statistics = await _userService.GetUserStatisticsAsync();
+            return Ok(statistics);
         }
     }
 }

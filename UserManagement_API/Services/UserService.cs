@@ -75,6 +75,17 @@ namespace UserManagement_API.Services
             return true;
         }
 
+        public async Task<IEnumerable<UserDto>> SearchUsersAsync(string? keyword)
+        {
+            var users = await _userRepository.SearchUsersAsync(keyword);
+            return users.Select(MapToUserDto);
+        }
+
+        public async Task<UserStatisticsDto> GetUserStatisticsAsync()
+        {
+            return await _userRepository.GetUserStatisticsAsync();
+        }
+
         // User functions
         public async Task<UserDto?> GetMyProfileAsync(int userId)
         {

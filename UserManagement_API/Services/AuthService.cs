@@ -1,4 +1,7 @@
-﻿using UserManagement_API.Helpers;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
+using UserManagement_API.Helpers;
 using UserManagement_API.Models.DTOs;
 using UserManagement_API.Models.Entities;
 using UserManagement_API.Repositories.IRepository;
@@ -10,16 +13,17 @@ namespace UserManagement_API.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(IUserRepository userRepository, IEmailService emailService)
+        public AuthService(IUserRepository userRepository, IEmailService emailService, IConfiguration configuration)
         {
             _userRepository = userRepository;
             _emailService = emailService;
+            _configuration = configuration;
         }
 
         public async Task<RegisterResponseDto> RegisterAsync(RegisterDto registerDto)
         {
-            // Check username exists
             if (await _userRepository.ExistsByUsernameAsync(registerDto.Username))
             {
                 return new RegisterResponseDto
@@ -29,7 +33,6 @@ namespace UserManagement_API.Services
                 };
             }
 
-            // Check email exists
             if (await _userRepository.ExistsByEmailAsync(registerDto.Email))
             {
                 return new RegisterResponseDto
@@ -39,7 +42,6 @@ namespace UserManagement_API.Services
                 };
             }
 
-            // Validate email format
             if (!IsValidEmail(registerDto.Email))
             {
                 return new RegisterResponseDto
@@ -51,8 +53,6 @@ namespace UserManagement_API.Services
 
             // Hash password
             var hashedPassword = PasswordHelperStatic.HashPassword(registerDto.Password);
-
-            // Create new user
             var user = new User
             {
                 Username = registerDto.Username,
@@ -210,7 +210,7 @@ namespace UserManagement_API.Services
                 };
             }
 
-            // Verify password
+            // Verify password based on role
             bool passwordValid = user.RoleId == 3 ?
                 PasswordHelperStatic.VerifyPassword(loginDto.Password, user.Password) :
                 (loginDto.Password == user.Password);
@@ -223,6 +223,20 @@ namespace UserManagement_API.Services
                 };
             }
 
+            // 🆕 Generate JWT Token
+            var authClaims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.UserId.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role.RoleName),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim("username", user.Username),
+            new Claim("fullName", user.FullName)
+        };
+
+            var token = JwtHelper.CreateToken(authClaims, _configuration);
+            var refreshToken = JwtHelper.GenerateRefreshToken();
+
             return new AuthResponseDto
             {
                 UserId = user.UserId,
@@ -231,7 +245,145 @@ namespace UserManagement_API.Services
                 Email = user.Email,
                 RoleName = user.Role.RoleName,
                 IsActive = user.IsActive,
-                Message = "Login successful"
+                Message = "Login successful",
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(token), // 🆕 JWT Token
+                RefreshToken = refreshToken, // 🆕 Refresh Token
+                TokenExpiry = token.ValidTo // 🆕 Token expiry
+            };
+        }
+
+        public async Task<bool> LogoutAsync(int userId)
+        {
+            try
+            {
+                // Trong trường hợp đơn giản, chỉ cần log thông tin logout
+                // Trong thực tế có thể cần:
+                // - Invalidate JWT token (nếu dùng JWT)
+                // - Clear session (nếu dùng session)
+                // - Log audit trail
+                // - Update last logout time
+
+                var user = await _userRepository.GetByIdAsync(userId);
+                if (user == null) return false;
+
+                // Có thể log logout time
+                user.UpdatedAt = DateTime.UtcNow; // Update last activity
+                await _userRepository.UpdateAsync(user);
+
+                // Log cho debugging
+                Console.WriteLine($"User {user.Username} (ID: {userId}) logged out at {DateTime.UtcNow}");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Logout failed for userId {userId}: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto)
+        {
+            var user = await _userRepository.GetByEmailAsync(forgotPasswordDto.Email);
+            if (user == null)
+            {
+                return new ForgotPasswordResponseDto
+                {
+                    Success = false,
+                    Message = "Email không tồn tại trong hệ thống"
+                };
+            }
+
+            if (!user.IsActive)
+            {
+                return new ForgotPasswordResponseDto
+                {
+                    Success = false,
+                    Message = "Tài khoản chưa được kích hoạt"
+                };
+            }
+
+            // Generate reset OTP (6 số ngẫu nhiên)
+            var resetOtp = new Random().Next(100000, 999999).ToString();
+            await _userRepository.SaveResetOtpAsync(forgotPasswordDto.Email, resetOtp);
+
+            //Gửi email với mã reset OTP
+            string emailBody = $@"
+        <html>
+        <body style='font-family: Arial, sans-serif; padding: 20px;'>
+            <h2>🔐 Đặt Lại Mật Khẩu</h2>
+            <p>Chào <strong>{user.FullName}</strong>,</p>
+            <p>Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản <strong>{user.Username}</strong>.</p>
+            <div style='text-align: center; margin: 20px 0;'>
+                <p>Mã OTP đặt lại mật khẩu của bạn là:</p>
+                <div style='background-color: #f44336; color: white; padding: 15px; border-radius: 8px; font-size: 24px; font-weight: bold; letter-spacing: 3px;'>
+                    {resetOtp}
+                </div>
+            </div>
+            <p><strong>⏰ Mã này sẽ hết hạn sau 15 phút.</strong></p>
+            <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
+            <br>
+            <p>Trân trọng,<br>User Management Team</p>
+        </body>
+        </html>";
+
+            try
+            {
+                await _emailService.SendVerifyEmailAsync(forgotPasswordDto.Email, "Đặt lại mật khẩu", emailBody);
+
+                return new ForgotPasswordResponseDto
+                {
+                    Success = true,
+                    Message = "Mã OTP đặt lại mật khẩu đã được gửi đến email của bạn"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ForgotPasswordResponseDto
+                {
+                    Success = false,
+                    Message = $"Lỗi gửi email: {ex.Message}"
+                };
+            }
+        }
+
+        public async Task<ForgotPasswordResponseDto> ResetPasswordAsync(ResetPasswordDto resetPasswordDto)
+        {
+            var user = await _userRepository.GetByEmailAsync(resetPasswordDto.Email);
+            if (user == null)
+            {
+                return new ForgotPasswordResponseDto
+                {
+                    Success = false,
+                    Message = "Email không tồn tại trong hệ thống"
+                };
+            }
+
+            var isValidOtp = await _userRepository.VerifyResetOtpAsync(resetPasswordDto.Email, resetPasswordDto.Otp);
+            if (!isValidOtp)
+            {
+                return new ForgotPasswordResponseDto
+                {
+                    Success = false,
+                    Message = "Mã OTP không hợp lệ hoặc đã hết hạn"
+                };
+            }
+
+            var hashedPassword = user.RoleId == 3 ?
+                PasswordHelperStatic.HashPassword(resetPasswordDto.NewPassword) :
+                resetPasswordDto.NewPassword;
+
+            user.Password = hashedPassword;
+            user.Otp = null; // Clear reset OTP
+            user.OtpCreatedAt = null;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.UpdateAsync(user);
+
+            return new ForgotPasswordResponseDto
+            {
+                Success = true,
+                Message = "Mật khẩu đã được đặt lại thành công"
             };
         }
 

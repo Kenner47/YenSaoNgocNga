@@ -1,4 +1,5 @@
-﻿using UserManagement_API.Models.Entities;
+﻿using UserManagement_API.Models.DTOs;
+using UserManagement_API.Models.Entities;
 
 namespace UserManagement_API.Repositories.IRepository
 {
@@ -14,10 +15,17 @@ namespace UserManagement_API.Repositories.IRepository
         Task<User?> GetByIdAsync(int id);
         Task<IEnumerable<User>> GetAllUsersWithRoleAsync();
         Task<bool> DeleteAsync(int id);
+        Task<IEnumerable<User>> SearchUsersAsync(string? keyword);
+        Task<UserStatisticsDto> GetUserStatisticsAsync();
 
         // OTP methods
         Task SaveOtpAsync(string email, string otp);
         Task<bool> VerifyOtpAsync(string email, string otp);
         Task<(string? OtpCode, DateTime? OtpCreatedAt)> GetOtpInfoAsync(string email);
+
+        // RESET PASSWORD METHODS (reuse OTP fields)
+        Task SaveResetOtpAsync(string email, string otp);
+        Task<bool> VerifyResetOtpAsync(string email, string otp);
+
     }
 }
