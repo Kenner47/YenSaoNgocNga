@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UserManagement_API.Models.DTOs;
 using UserManagement_API.Services.IService;
 
@@ -71,6 +72,23 @@ namespace UserManagement_API.Controllers
                 return Unauthorized(result);
 
             return Ok(result);
+        }
+
+        [HttpPost("logout")]
+        public async Task<ActionResult> Logout([FromBody] LogoutDto logoutDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authService.LogoutAsync(logoutDto.UserId);
+
+            if (!result)
+                return BadRequest("Logout failed");
+
+            return Ok(new
+            {
+                message = "Logged out successfully"
+            });
         }
     }
 }

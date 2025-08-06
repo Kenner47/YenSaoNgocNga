@@ -235,6 +235,36 @@ namespace UserManagement_API.Services
             };
         }
 
+        public async Task<bool> LogoutAsync(int userId)
+        {
+            try
+            {
+                // Trong trường hợp đơn giản, chỉ cần log thông tin logout
+                // Trong thực tế có thể cần:
+                // - Invalidate JWT token (nếu dùng JWT)
+                // - Clear session (nếu dùng session)
+                // - Log audit trail
+                // - Update last logout time
+
+                var user = await _userRepository.GetByIdAsync(userId);
+                if (user == null) return false;
+
+                // Có thể log logout time
+                user.UpdatedAt = DateTime.UtcNow; // Update last activity
+                await _userRepository.UpdateAsync(user);
+
+                // Log cho debugging
+                Console.WriteLine($"User {user.Username} (ID: {userId}) logged out at {DateTime.UtcNow}");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Logout failed for userId {userId}: {ex.Message}");
+                return false;
+            }
+        }
+
         private bool IsValidEmail(string email)
         {
             try
