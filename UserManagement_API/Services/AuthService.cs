@@ -1,4 +1,7 @@
-﻿using UserManagement_API.Helpers;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
+using UserManagement_API.Helpers;
 using UserManagement_API.Models.DTOs;
 using UserManagement_API.Models.Entities;
 using UserManagement_API.Repositories.IRepository;
@@ -10,11 +13,13 @@ namespace UserManagement_API.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(IUserRepository userRepository, IEmailService emailService)
+        public AuthService(IUserRepository userRepository, IEmailService emailService, IConfiguration configuration)
         {
             _userRepository = userRepository;
             _emailService = emailService;
+            _configuration = configuration;
         }
 
         public async Task<RegisterResponseDto> RegisterAsync(RegisterDto registerDto)
@@ -205,7 +210,7 @@ namespace UserManagement_API.Services
                 };
             }
 
-            // Verify password
+            // Verify password based on role
             bool passwordValid = user.RoleId == 3 ?
                 PasswordHelperStatic.VerifyPassword(loginDto.Password, user.Password) :
                 (loginDto.Password == user.Password);
@@ -218,6 +223,20 @@ namespace UserManagement_API.Services
                 };
             }
 
+            // 🆕 Generate JWT Token
+            var authClaims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.UserId.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role.RoleName),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim("username", user.Username),
+            new Claim("fullName", user.FullName)
+        };
+
+            var token = JwtHelper.CreateToken(authClaims, _configuration);
+            var refreshToken = JwtHelper.GenerateRefreshToken();
+
             return new AuthResponseDto
             {
                 UserId = user.UserId,
@@ -226,7 +245,10 @@ namespace UserManagement_API.Services
                 Email = user.Email,
                 RoleName = user.Role.RoleName,
                 IsActive = user.IsActive,
-                Message = "Login successful"
+                Message = "Login successful",
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(token), // 🆕 JWT Token
+                RefreshToken = refreshToken, // 🆕 Refresh Token
+                TokenExpiry = token.ValidTo // 🆕 Token expiry
             };
         }
 

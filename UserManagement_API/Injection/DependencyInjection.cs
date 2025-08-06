@@ -14,8 +14,12 @@ namespace UserManagement_API.Injection
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-            //PasswordHelper
+            // PasswordHelper
             services.AddScoped<PasswordHelper>();
+
+            // JWT-related
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddHttpContextAccessor();
 
             // Register repositories
             services.AddScoped<IRoleRepository, RoleRepository>();
