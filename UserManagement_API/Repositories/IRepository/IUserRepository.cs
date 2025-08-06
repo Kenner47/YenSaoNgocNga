@@ -22,5 +22,10 @@ namespace UserManagement_API.Repositories.IRepository
         Task SaveOtpAsync(string email, string otp);
         Task<bool> VerifyOtpAsync(string email, string otp);
         Task<(string? OtpCode, DateTime? OtpCreatedAt)> GetOtpInfoAsync(string email);
+
+        // RESET PASSWORD METHODS (reuse OTP fields)
+        Task SaveResetOtpAsync(string email, string otp);
+        Task<bool> VerifyResetOtpAsync(string email, string otp);
+
     }
 }

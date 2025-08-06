@@ -185,5 +185,32 @@ namespace UserManagement_API.Repositories
             var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
             return user != null ? (user.Otp, user.OtpCreatedAt) : (null, null);
         }
+
+        // RESET PASSWORD METHODS (reuse OTP fields)
+        public async Task SaveResetOtpAsync(string email, string otp)
+        {
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+            if (user != null)
+            {
+                user.Otp = otp;
+                user.OtpCreatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> VerifyResetOtpAsync(string email, string otp)
+        {
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null || user.Otp != otp)
+                return false;
+
+            if (user.OtpCreatedAt == null)
+                return false;
+
+            // Reset OTP có hiệu lực 15 phút
+            var elapsedTime = DateTime.UtcNow - user.OtpCreatedAt.Value;
+            return elapsedTime.TotalMinutes <= 15;
+        }
     }
 }

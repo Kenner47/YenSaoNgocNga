@@ -9,5 +9,8 @@ namespace UserManagement_API.Services.IService
         Task<bool> ActivateAccountAsync(VerifyOtpDto verifyOtpDto);
         Task<RegisterResponseDto> ResendOtpAsync(string email);
         Task<bool> LogoutAsync(int userId);
+        Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto);
+        Task<ForgotPasswordResponseDto> ResetPasswordAsync(ResetPasswordDto resetPasswordDto);
+
     }
 }
