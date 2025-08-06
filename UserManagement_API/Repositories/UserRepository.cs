@@ -63,6 +63,25 @@ namespace UserManagement_API.Repositories
             return await _context.User.FindAsync(id);
         }
 
+        public async Task<IEnumerable<User>> GetAllUsersWithRoleAsync()
+        {
+            return await _context.User
+                .Include(u => u.Role)
+                .OrderBy(u => u.UserId)
+                .ToListAsync();
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var user = await _context.User.FindAsync(id);
+            if (user == null)
+                return false;
+
+            _context.User.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         // OTP methods
         public async Task SaveOtpAsync(string email, string otp)
         {

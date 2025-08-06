@@ -12,6 +12,8 @@ namespace UserManagement_API.Repositories.IRepository
         Task<bool> ExistsByEmailAsync(string email);
         Task<User?> GetByIdWithRoleAsync(int id);
         Task<User?> GetByIdAsync(int id);
+        Task<IEnumerable<User>> GetAllUsersWithRoleAsync();
+        Task<bool> DeleteAsync(int id);
 
         // OTP methods
         Task SaveOtpAsync(string email, string otp);
