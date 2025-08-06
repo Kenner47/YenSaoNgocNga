@@ -104,27 +104,26 @@ namespace UserManagement_API.Repositories
         public async Task<UserStatisticsDto> GetUserStatisticsAsync()
         {
             var now = DateTime.UtcNow;
-            // 🔧 FIX: Đảm bảo tất cả DateTime đều có Kind = UTC
             var today = DateTime.SpecifyKind(now.Date, DateTimeKind.Utc);
             var weekStart = DateTime.SpecifyKind(today.AddDays(-(int)today.DayOfWeek), DateTimeKind.Utc);
             var monthStart = DateTime.SpecifyKind(new DateTime(now.Year, now.Month, 1), DateTimeKind.Utc);
 
-            // 📊 Basic counts
+            // Basic counts
             var totalUsers = await _context.User.CountAsync();
             var activeUsers = await _context.User.CountAsync(u => u.IsActive);
             var inactiveUsers = totalUsers - activeUsers;
 
-            // 🎭 Users by Role
+            // Users by Role
             var adminCount = await _context.User.CountAsync(u => u.RoleId == 1);
             var employeeCount = await _context.User.CountAsync(u => u.RoleId == 2);
             var userCount = await _context.User.CountAsync(u => u.RoleId == 3);
 
-            // 👫 Users by Gender
+            // Users by Gender
             var maleCount = await _context.User.CountAsync(u => u.Sex.ToLower() == "male" || u.Sex.ToLower() == "nam");
             var femaleCount = await _context.User.CountAsync(u => u.Sex.ToLower() == "female" || u.Sex.ToLower() == "nữ" || u.Sex.ToLower() == "nu");
             var otherCount = totalUsers - maleCount - femaleCount;
 
-            // 📅 Recent registrations - 🔧 FIX: So sánh với >= thay vì ==
+            // Recent registrations
             var todayRegistrations = await _context.User.CountAsync(u => u.CreatedAt >= today);
             var thisWeekRegistrations = await _context.User.CountAsync(u => u.CreatedAt >= weekStart);
             var thisMonthRegistrations = await _context.User.CountAsync(u => u.CreatedAt >= monthStart);
