@@ -17,10 +17,11 @@ namespace OrderManagement_API.Injection
 
             // Repositories
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 
             // Services
             services.AddScoped<IOrderService, OrderService>();
-
+            services.AddScoped<IOrderDetailService, OrderDetailService>();
 
             return services;
         }
