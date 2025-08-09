@@ -18,10 +18,6 @@ namespace OrderManagement_API.Models.DTOs
         public string? CouponCode { get; set; }
 
         [Required]
-        [StringLength(20)]
-        public string PaymentMethod { get; set; } = "VnPay";
-
-        [Required]
         [StringLength(100)]
         public string ShippingName { get; set; } = string.Empty;
 

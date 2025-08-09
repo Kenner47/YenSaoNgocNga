@@ -14,7 +14,6 @@
         public string ShippingPhone { get; set; } = string.Empty;
         public string ShippingAddress { get; set; } = string.Empty;
         public List<OrderDetailDto> OrderDetails { get; set; } = new();
-        public List<TransactionDto> Transactions { get; set; } = new();
 
     }
 }

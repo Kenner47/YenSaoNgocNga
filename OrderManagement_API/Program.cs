@@ -7,7 +7,7 @@ using Microsoft.OpenApi.Models;
 using OrderManagement_API.Data;
 using OrderManagement_API.Injection;
 
-namespace UserManagement_API
+namespace OrderManagement_API
 {
     public class Program
     {

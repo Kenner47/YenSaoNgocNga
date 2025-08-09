@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement_API", "Pr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderManagement_API", "OrderManagement_API\OrderManagement_API.csproj", "{0F674B47-74B9-4C86-8CD8-4557F66E8808}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentManagement_API", "PaymentManagement_API\PaymentManagement_API.csproj", "{2CCC2B84-05C9-49C0-9E49-032AD77831C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{0F674B47-74B9-4C86-8CD8-4557F66E8808}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F674B47-74B9-4C86-8CD8-4557F66E8808}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F674B47-74B9-4C86-8CD8-4557F66E8808}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CCC2B84-05C9-49C0-9E49-032AD77831C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CCC2B84-05C9-49C0-9E49-032AD77831C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CCC2B84-05C9-49C0-9E49-032AD77831C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CCC2B84-05C9-49C0-9E49-032AD77831C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{DD3C38E7-3932-4951-A762-FF4A2E3229D4} = {7BD99096-5BA6-4E9F-A1E1-593435BB9B8E}
 		{23C795AB-B4C9-4E27-987A-CBB8256DA23B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{0F674B47-74B9-4C86-8CD8-4557F66E8808} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{2CCC2B84-05C9-49C0-9E49-032AD77831C0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {01FC95EA-1BB1-4B6A-BC69-EA56890D0B92}

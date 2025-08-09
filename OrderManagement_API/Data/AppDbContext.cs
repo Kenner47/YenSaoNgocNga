@@ -12,7 +12,6 @@ namespace OrderManagement_API.Data
         // DbSets for Order Management Entities
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,18 +34,6 @@ namespace OrderManagement_API.Data
 
                 entity.HasOne(e => e.Order)
                     .WithMany(e => e.OrderDetails)
-                    .HasForeignKey(e => e.OrderId)
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            // Transaction Configuration
-            modelBuilder.Entity<Transaction>(entity =>
-            {
-                entity.HasKey(e => e.TransactionId);
-                entity.Property(e => e.Amount).HasPrecision(18, 2);
-
-                entity.HasOne(e => e.Order)
-                    .WithMany(e => e.Transactions)
                     .HasForeignKey(e => e.OrderId)
                     .OnDelete(DeleteBehavior.Cascade);
             });

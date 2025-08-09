@@ -48,7 +48,6 @@ namespace OrderManagement_API.Services
                 DiscountAmount = createDto.DiscountAmount,
                 CouponCode = createDto.CouponCode,
                 Status = false, // Mặc định là pending
-                PaymentMethod = createDto.PaymentMethod,
                 ShippingName = createDto.ShippingName,
                 ShippingPhone = createDto.ShippingPhone,
                 ShippingAddress = createDto.ShippingAddress
@@ -112,12 +111,10 @@ namespace OrderManagement_API.Services
                 DiscountAmount = order.DiscountAmount,
                 CouponCode = order.CouponCode,
                 Status = order.Status,
-                PaymentMethod = order.PaymentMethod,
                 ShippingName = order.ShippingName,
                 ShippingPhone = order.ShippingPhone,
                 ShippingAddress = order.ShippingAddress,
-                OrderDetails = order.OrderDetails.Select(MapOrderDetailToDto).ToList(),
-                Transactions = order.Transactions.Select(MapTransactionToDto).ToList()
+                OrderDetails = order.OrderDetails.Select(MapOrderDetailToDto).ToList()
             };
         }
 
@@ -132,21 +129,6 @@ namespace OrderManagement_API.Services
                 Quantity = orderDetail.Quantity,
                 UnitPrice = orderDetail.UnitPrice,
                 Subtotal = orderDetail.Subtotal
-            };
-        }
-
-        private static TransactionDto MapTransactionToDto(Transaction transaction)
-        {
-            return new TransactionDto
-            {
-                TransactionId = transaction.TransactionId,
-                OrderId = transaction.OrderId,
-                VnpTxnRef = transaction.VnpTxnRef,
-                Amount = transaction.Amount,
-                Status = transaction.Status,
-                VnpTransactionNo = transaction.VnpTransactionNo,
-                VnpResponseCode = transaction.VnpResponseCode,
-                TransactionDate = transaction.TransactionDate
             };
         }
     }

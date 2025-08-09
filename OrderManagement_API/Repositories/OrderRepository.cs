@@ -23,7 +23,6 @@ namespace OrderManagement_API.Repositories
         {
             return await _context.Orders
                 .Include(o => o.OrderDetails)
-                .Include(o => o.Transactions)
                 .FirstOrDefaultAsync(o => o.OrderId == id);
         }
 
@@ -31,7 +30,6 @@ namespace OrderManagement_API.Repositories
         {
             return await _context.Orders
                 .Include(o => o.OrderDetails)
-                .Include(o => o.Transactions)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
@@ -40,7 +38,6 @@ namespace OrderManagement_API.Repositories
         {
             return await _context.Orders
                 .Include(o => o.OrderDetails)
-                .Include(o => o.Transactions)
                 .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
@@ -50,7 +47,6 @@ namespace OrderManagement_API.Repositories
         {
             return await _context.Orders
                 .Include(o => o.OrderDetails)
-                .Include(o => o.Transactions)
                 .Where(o => o.Status == status)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();

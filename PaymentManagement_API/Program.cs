@@ -1,14 +1,13 @@
-﻿
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using ProductManagement_API.Data;
-using ProductManagement_API.Injection;
+using PaymentManagement_API.Data;
+using PaymentManagement_API.Injection;
 
-namespace ProductManagement_API
+namespace PaymentManagement_API
 {
     public class Program
     {
@@ -24,7 +23,7 @@ namespace ProductManagement_API
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Đăng ký DI cho service/repo
-            builder.Services.AddProductServices(builder.Configuration);
+            builder.Services.AddPaymentServices(builder.Configuration);
 
             // JWT Authentication Configuration
             builder.Services.AddAuthentication(options =>

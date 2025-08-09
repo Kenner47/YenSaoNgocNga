@@ -27,10 +27,6 @@ namespace OrderManagement_API.Models.Entities
         [Required]
         public bool Status { get; set; } = false;
 
-        [Required]
-        [StringLength(20)]
-        public string PaymentMethod { get; set; } = "VnPay";
-
         // Shipping Info
         [Required]
         [StringLength(100)]
@@ -46,6 +42,5 @@ namespace OrderManagement_API.Models.Entities
 
         // Navigation Properties
         public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
-        public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
     }
 }
