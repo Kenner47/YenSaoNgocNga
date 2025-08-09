@@ -2,7 +2,7 @@
 
 namespace ProductManagement_API.Controllers
 {
-    public class ProductsController : Controller
+    public class ProductController : Controller
     {
         public IActionResult Index()
         {
