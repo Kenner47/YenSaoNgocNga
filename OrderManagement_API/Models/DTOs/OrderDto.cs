@@ -9,7 +9,6 @@
         public decimal DiscountAmount { get; set; }
         public string? CouponCode { get; set; }
         public bool Status { get; set; }
-        public string PaymentMethod { get; set; } = string.Empty;
         public string ShippingName { get; set; } = string.Empty;
         public string ShippingPhone { get; set; } = string.Empty;
         public string ShippingAddress { get; set; } = string.Empty;
