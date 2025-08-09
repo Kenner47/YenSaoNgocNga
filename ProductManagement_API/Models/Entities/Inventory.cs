@@ -28,11 +28,5 @@ namespace ProductManagement_API.Models.Entities
 
         // Navigation Properties
         public Product Product { get; set; } = null!;
-
-        // Helper Properties
-        //public bool IsLowStock => Quantity <= MinStockLevel;
-        //public bool IsOutOfStock => Quantity <= 0;
-        //public bool CanSell(int requestedQuantity) => Quantity >= requestedQuantity;
-        //public string StockStatus => IsOutOfStock ? "Hết hàng" : IsLowStock ? "Sắp hết" : "Còn hàng";
     }
 }

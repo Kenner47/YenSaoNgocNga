@@ -16,14 +16,14 @@ namespace ProductManagement_API.Injection
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
             // Repositories
-            //services.AddScoped<IProductRepository, ProductRepository>();
-            //services.AddScoped<ICategoryRepository, CategoryRepository>();
-            //services.AddScoped<IInventoryRepository, InventoryRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IInventoryRepository, InventoryRepository>();
 
             // Services
-            //services.AddScoped<IProductService, ProductService>();
-            //services.AddScoped<ICategoryService, CategoryService>();
-            //services.AddScoped<IInventoryService, InventoryService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IInventoryService, InventoryService>();
 
             return services;
         }

@@ -20,9 +20,5 @@ namespace ProductManagement_API.Models.Entities
 
         // Navigation Properties
         public List<Product> Products { get; set; } = new();
-
-        // Helper Properties
-        //public int ProductCount => Products?.Count(p => p.IsActive) ?? 0;
-        //public bool HasProducts => ProductCount > 0;
     }
 }
