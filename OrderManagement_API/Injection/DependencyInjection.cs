@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OrderManagement_API.Data;
+using OrderManagement_API.Repositories;
+using OrderManagement_API.Repositories.IRepository;
+using OrderManagement_API.Services;
+using OrderManagement_API.Services.IService;
 
 namespace OrderManagement_API.Injection
 {
@@ -12,9 +16,11 @@ namespace OrderManagement_API.Injection
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
             // Repositories
-            
+            services.AddScoped<IOrderRepository, OrderRepository>();
 
             // Services
+            services.AddScoped<IOrderService, OrderService>();
+
 
             return services;
         }
