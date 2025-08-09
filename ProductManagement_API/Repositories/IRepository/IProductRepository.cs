@@ -1,0 +1,6 @@
+﻿namespace ProductManagement_API.Repositories.IRepository
+{
+    public interface IProductRepository
+    {
+    }
+}
