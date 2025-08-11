@@ -375,13 +375,13 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 500;
 }
 
-/* CTA Section */
+/* CTA Section - CỰC KỲ COMPACT */
 .cta-section {
     background: linear-gradient(135deg, rgba(46, 139, 87, 0.95), rgba(60, 179, 113, 0.95)), url('https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    padding: 5rem 0;
+    padding: 1rem 0; /* Giảm từ 2rem xuống 1rem */
     text-align: center;
     position: relative;
 }
@@ -402,20 +402,78 @@ h1, h2, h3, h4, h5, h6 {
         z-index: 2;
     }
 
-/* Footer */
+    /* Giảm size font cho CTA - COMPACT HƠN */
+    .cta-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.4;
+    }
+
+/* Footer - CỰC KỲ COMPACT */
 .custom-footer {
     background: var(--text-dark) !important;
+    padding: 0; 
 }
 
+    /* Footer compact styling - TĂNG CƯỜNG COMPACT */
+    .custom-footer h5 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+
+    .custom-footer h6 {
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+    }
+
+    .custom-footer .small {
+        font-size: 0.8rem;
+        line-height: 1.3;
+    }
+
+    .custom-footer .social-links a {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        margin-right: 0.5rem;
+    }
+
+        .custom-footer .social-links a:hover {
+            color: var(--accent-color);
+            transform: translateY(-1px);
+        }
+
+    .custom-footer .list-unstyled li {
+        margin-bottom: 0.2rem;
+    }
+
+    .custom-footer .input-group-sm .form-control,
+    .custom-footer .input-group-sm .btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+    }
+
+/* Social links general styling */
 .social-links a {
     color: var(--text-light);
-    font-size: 1.2rem;
+    font-size: 0.9rem;
     transition: all 0.3s ease;
+    text-decoration: none;
 }
 
     .social-links a:hover {
         color: var(--accent-color);
-        transform: translateY(-2px);
+        transform: translateY(-1px);
     }
 
 /* Parallax Effect */
@@ -455,6 +513,39 @@ h1, h2, h3, h4, h5, h6 {
     .hero-section,
     .cta-section {
         background-attachment: scroll;
+    }
+
+    /* CTA responsive */
+    .cta-section {
+        padding: 1rem 0;
+    }
+
+        .cta-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .cta-section p {
+            font-size: 0.85rem; 
+            margin-bottom: 1rem;
+        }
+
+    /* Footer responsive - CỰC KỲ COMPACT trên mobile */
+    .custom-footer .container {
+        padding-top: 1rem !important; 
+        padding-bottom: 1rem !important;
+    }
+
+    .custom-footer .mb-3 {
+        margin-bottom: 0.75rem !important; 
+    }
+
+    .custom-footer h5 {
+        font-size: 0.95rem; 
+    }
+
+    .custom-footer h6 {
+        font-size: 0.85rem;
     }
 }
 
