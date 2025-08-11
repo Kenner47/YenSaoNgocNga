@@ -1,8 +1,224 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Trang Chủ";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Yến Sào Ngọc Nga
+                        <span class="text-primary">Tinh Hoa Thiên Nhiên</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Khám phá bộ sưu tập yến sào cao cấp, tự nhiên 100% từ những vùng nguyên liệu tốt nhất Việt Nam.
+                        Chất lượng đảm bảo, giá trị dinh dưỡng tuyệt vời cho sức khỏe gia đình bạn.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#products" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-leaf me-2"></i> Khám Phá Sản Phẩm
+                        </a>
+                        <a href="#about" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-play me-2"></i> Xem Video
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <h3>1000+</h3>
+                            <p>Khách Hàng Tin Tưởng</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>5 Năm</h3>
+                            <p>Kinh Nghiệm</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>100%</h3>
+                            <p>Tự Nhiên</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image">
+                    <img src="https://sokfarm-s3.s3.ap-southeast-1.amazonaws.com/wp-content/Y%E1%BA%BFn%20ch%C6%B0ng%20m%E1%BA%ADt%20hoa%20d%E1%BB%ABa%20t%C6%B0%C6%A1i/yen-sao-bo-duong.png"
+                         alt="Yến Sào Ngọc Nga" class="img-fluid rounded-4 shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="section-title">Tại Sao Chọn Yến Sào Ngọc Nga?</h2>
+                <p class="section-subtitle">Những ưu điểm vượt trội khiến khách hàng tin tưởng</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h4>Chất Lượng Đảm Bảo</h4>
+                    <p>100% yến sào tự nhiên, không chất bảo quản, có giấy chứng nhận chất lượng.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h4>Giao Hàng Nhanh</h4>
+                    <p>Giao hàng toàn quốc trong 24h, đóng gói cẩn thận, bảo quản theo tiêu chuẩn.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4>Hỗ Trợ 24/7</h4>
+                    <p>Đội ngũ tư vấn chuyên nghiệp, sẵn sàng hỗ trợ khách hàng mọi lúc.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section id="products" class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="section-title">Sản Phẩm Nổi Bật</h2>
+                <p class="section-subtitle">Khám phá bộ sưu tập yến sào cao cấp của chúng tôi</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+                             alt="Yến Thô" class="img-fluid">
+                        <div class="product-overlay">
+                            <button class="btn btn-primary">Xem Chi Tiết</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h5>Yến Sào Thô</h5>
+                        <p class="text-muted">Yến sào tự nhiên, giữ nguyên hình dạng ban đầu</p>
+                        <div class="product-price">
+                            <span class="current-price">1.500.000₫</span>
+                            <span class="old-price">1.800.000₫</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+                             alt="Yến Chưng" class="img-fluid">
+                        <div class="product-overlay">
+                            <button class="btn btn-primary">Xem Chi Tiết</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h5>Yến Sào Chưng</h5>
+                        <p class="text-muted">Yến sào đã chưng sẵn, tiện lợi sử dụng</p>
+                        <div class="product-price">
+                            <span class="current-price">2.200.000₫</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+                             alt="Yến Tinh Chế" class="img-fluid">
+                        <div class="product-overlay">
+                            <button class="btn btn-primary">Xem Chi Tiết</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h5>Yến Sào Tinh Chế</h5>
+                        <p class="text-muted">Yến sào tinh chế cao cấp, chất lượng tuyệt vời</p>
+                        <div class="product-price">
+                            <span class="current-price">3.500.000₫</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5">
+            <a href="#" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-eye me-2"></i> Xem Tất Cả Sản Phẩm
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="about-content">
+                    <h2 class="section-title text-start">Về Yến Sào Ngọc Nga</h2>
+                    <p class="mb-4">
+                        Với hơn 5 năm kinh nghiệm trong ngành yến sào, chúng tôi tự hào là đơn vị cung cấp
+                        yến sào chất lượng cao, được thu hoạch từ những vùng nguyên liệu tốt nhất.
+                    </p>
+                    <div class="about-features">
+                        <div class="about-feature">
+                            <i class="fas fa-check-circle text-primary me-3"></i>
+                            <span>Nguồn gốc rõ ràng, minh bạch</span>
+                        </div>
+                        <div class="about-feature">
+                            <i class="fas fa-check-circle text-primary me-3"></i>
+                            <span>Quy trình sản xuất nghiêm ngặt</span>
+                        </div>
+                        <div class="about-feature">
+                            <i class="fas fa-check-circle text-primary me-3"></i>
+                            <span>Đội ngũ chuyên gia giàu kinh nghiệm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="about-image">
+                    <img src="https://i.pinimg.com/736x/1e/ad/ab/1eadaba8a4839d5e33a2c7aa2c81c788.jpg"
+                         alt="Về chúng tôi" class="img-fluid rounded-4 shadow">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="text-white mb-4">Sẵn Sàng Trải Nghiệm?</h2>
+                <p class="text-white-50 mb-4">
+                    Hãy liên hệ với chúng tôi ngay hôm nay để được tư vấn và đặt hàng những sản phẩm yến sào tốt nhất.
+                </p>
+                <a href="#contact" class="btn btn-light btn-lg me-3">
+                    <i class="fas fa-phone me-2"></i> Liên Hệ Ngay
+                </a>
+                <a href="#" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-shopping-cart me-2"></i> Đặt Hàng
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
