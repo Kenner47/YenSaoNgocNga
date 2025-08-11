@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PaymentManagement_API.Models.Entities;
 
 namespace PaymentManagement_API.Data
 {
@@ -7,13 +8,25 @@ namespace PaymentManagement_API.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+
         // DbSets for Payment Management Entities
-        // Example: public DbSet<Payment> Payments { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            // Configure entities, relationships, and constraints here
-            // Example: modelBuilder.Entity<Payment>().HasKey(p => p.PaymentId);
+
+            // Transaction Configuration
+            modelBuilder.Entity<Transaction>(entity =>
+            {
+                entity.HasKey(e => e.TransactionId);
+                entity.Property(e => e.Amount).HasPrecision(18, 2);
+
+                // Index for faster queries
+                entity.HasIndex(e => e.VnpTxnRef).IsUnique();
+                entity.HasIndex(e => e.OrderId);
+                entity.HasIndex(e => e.Status);
+            });
         }
     }
 }

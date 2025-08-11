@@ -1,13 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PaymentManagement_API.Models.Entities
+namespace PaymentManagement_API.Models.DTOs
 {
-    public class Transaction
+    public class CreateTransactionDto
     {
-        [Key]
-        public int TransactionId { get; set; }
-
         [Required]
         public int OrderId { get; set; }
 
@@ -16,10 +12,9 @@ namespace PaymentManagement_API.Models.Entities
         public string VnpTxnRef { get; set; } = string.Empty;
 
         [Required]
-        [Column(TypeName = "decimal(18,2)")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Số tiền phải lớn hơn 0")]
         public decimal Amount { get; set; }
 
-        [Required]
         [StringLength(20)]
         public string Status { get; set; } = "Pending";
 
@@ -28,15 +23,5 @@ namespace PaymentManagement_API.Models.Entities
 
         [StringLength(10)]
         public string? VnpResponseCode { get; set; }
-
-        [StringLength(50)]
-        public string? VnpBankCode { get; set; }
-
-        [StringLength(255)]
-        public string? VnpOrderInfo { get; set; }
-
-        public DateTime? VnpPayDate { get; set; }
-
-        public DateTime TransactionDate { get; set; } = DateTime.UtcNow;
     }
 }
