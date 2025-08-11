@@ -7,34 +7,34 @@ namespace ProductManagement_API.Models.Entities
         [Key]
         public int ProductId { get; set; }
 
-        [Required(ErrorMessage = "Danh mục không được để trống")]
+        [Required]
         public int CategoryId { get; set; }
 
-        [Required(ErrorMessage = "Tên sản phẩm không được để trống")]
-        [StringLength(200, ErrorMessage = "Tên sản phẩm không được quá 200 ký tự")]
+        [Required]
+        [StringLength(200)]
         public string ProductName { get; set; } = string.Empty;
 
-        [StringLength(1000, ErrorMessage = "Mô tả không được quá 1000 ký tự")]
+        [StringLength(1000)]
         public string Description { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Giá sản phẩm không được để trống")]
+        [Required]
         [Range(0.01, double.MaxValue, ErrorMessage = "Giá phải lớn hơn 0")]
         public decimal Price { get; set; }
 
-        [StringLength(50)]
+        [Required]
+        [StringLength(100)]
         public string ProductType { get; set; } = string.Empty; // yến Thô, Chưng, Tinh chế...
 
         [StringLength(100)]
         public string Origin { get; set; } = string.Empty; // Khánh Hòa, Ninh Thuận...
 
-        [Range(1, 10000, ErrorMessage = "Trọng lượng phải từ 1-10000 gram")]
-        public int Weight { get; set; } // gram
-
         [StringLength(10)]
         public string Grade { get; set; } = string.Empty; // Hạng: A, B, C...
 
-        [Url(ErrorMessage = "URL hình ảnh không hợp lệ")]
-        [StringLength(500)]
+        [Required]
+        [Range(1, 10000, ErrorMessage = "Trọng lượng phải từ 1-10000 gram")]
+        public int Weight { get; set; } // gram
+
         public string ImageUrl { get; set; } = string.Empty;
 
         public bool IsActive { get; set; } = true;
