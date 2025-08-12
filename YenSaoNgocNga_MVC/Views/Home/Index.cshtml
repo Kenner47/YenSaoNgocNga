@@ -18,7 +18,7 @@
                         Chất lượng đảm bảo, giá trị dinh dưỡng tuyệt vời cho sức khỏe gia đình bạn.
                     </p>
                     <div class="hero-buttons">
-                        <a href="#products" class="btn btn-primary btn-lg me-3">
+                        <a asp-area="ProductManagement" asp-controller="Product" asp-action="Index" class="btn btn-primary btn-lg me-3">
                             <i class="fas fa-leaf me-2"></i> Khám Phá Sản Phẩm
                         </a>
                         <a href="#about" class="btn btn-outline-light btn-lg">
@@ -159,7 +159,7 @@
             </div>
         </div>
         <div class="text-center mt-5">
-            <a href="#" class="btn btn-outline-primary btn-lg">
+            <a asp-area="ProductManagement" asp-controller="Product" asp-action="Index" class="btn btn-outline-primary btn-lg">
                 <i class="fas fa-eye me-2"></i> Xem Tất Cả Sản Phẩm
             </a>
         </div>
@@ -212,10 +212,10 @@
                 <p class="text-white-50 mb-4">
                     Hãy liên hệ với chúng tôi ngay hôm nay để được tư vấn và đặt hàng những sản phẩm yến sào tốt nhất.
                 </p>
-                <a href="#contact" class="btn btn-light btn-lg me-3">
+                <a asp-area="UserManagement" asp-controller="Auth" asp-action="Register" class="btn btn-light btn-lg me-3">
                     <i class="fas fa-phone me-2"></i> Liên Hệ Ngay
                 </a>
-                <a href="#" class="btn btn-outline-light btn-lg">
+                <a asp-area="OrderManagement" asp-controller="Order" asp-action="Create" class="btn btn-outline-light btn-lg">
                     <i class="fas fa-shopping-cart me-2"></i> Đặt Hàng
                 </a>
             </div>

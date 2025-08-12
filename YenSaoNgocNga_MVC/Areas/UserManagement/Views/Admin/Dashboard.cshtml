@@ -1,0 +1,308 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<!-- Dashboard Header -->
+<div class="dashboard-header mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h1 class="h3 mb-0">
+                <i class="fas fa-tachometer-alt text-primary me-2"></i>
+                Admin Dashboard
+            </h1>
+            <p class="text-muted">Chào mừng trở lại, @ViewBag.UserName!</p>
+        </div>
+        <div class="col-md-6 text-end">
+            <div class="btn-group">
+                <button class="btn btn-outline-primary" onclick="refreshData()">
+                    <i class="fas fa-sync-alt me-1"></i>Refresh
+                </button>
+                <button class="btn btn-primary" onclick="exportReport()">
+                    <i class="fas fa-download me-1"></i>Export
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="text-uppercase text-primary fw-bold text-xs mb-1">
+                            Tổng Người Dùng
+                        </div>
+                        <div class="h5 mb-0 fw-bold text-gray-800" id="totalUsers">1,234</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="text-uppercase text-success fw-bold text-xs mb-1">
+                            Tổng Sản Phẩm
+                        </div>
+                        <div class="h5 mb-0 fw-bold text-gray-800" id="totalProducts">567</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-leaf fa-2x text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="text-uppercase text-info fw-bold text-xs mb-1">
+                            Đơn Hàng Hôm Nay
+                        </div>
+                        <div class="h5 mb-0 fw-bold text-gray-800" id="todayOrders">89</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-shopping-cart fa-2x text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="text-uppercase text-warning fw-bold text-xs mb-1">
+                            Doanh Thu Tháng
+                        </div>
+                        <div class="h5 mb-0 fw-bold text-gray-800" id="monthlyRevenue">₫45.2M</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <!-- Revenue Chart -->
+    <div class="col-xl-8 col-lg-7">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-primary">Biểu Đồ Doanh Thu</h6>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        7 ngày qua
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">7 ngày qua</a></li>
+                        <li><a class="dropdown-item" href="#">30 ngày qua</a></li>
+                        <li><a class="dropdown-item" href="#">3 tháng qua</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="revenueChart" width="100%" height="40"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Chart -->
+    <div class="col-xl-4 col-lg-5">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 fw-bold text-primary">Trạng Thái Đơn Hàng</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-pie pt-4 pb-2">
+                    <canvas id="ordersChart" width="100%" height="50"></canvas>
+                </div>
+                <div class="mt-4 text-center small">
+                    <span class="me-2">
+                        <i class="fas fa-circle text-primary"></i> Hoàn thành
+                    </span>
+                    <span class="me-2">
+                        <i class="fas fa-circle text-success"></i> Đang xử lý
+                    </span>
+                    <span class="me-2">
+                        <i class="fas fa-circle text-info"></i> Chờ xác nhận
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row">
+    <!-- Recent Orders -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-primary">Đơn Hàng Gần Đây</h6>
+                <a asp-action="Orders" class="btn btn-sm btn-primary">Xem tất cả</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Mã ĐH</th>
+                                <th>Khách hàng</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrders">
+                            <tr>
+                                <td>#ORD001</td>
+                                <td>Nguyễn Văn A</td>
+                                <td>₫1.500.000</td>
+                                <td><span class="badge bg-success">Hoàn thành</span></td>
+                            </tr>
+                            <tr>
+                                <td>#ORD002</td>
+                                <td>Trần Thị B</td>
+                                <td>₫2.200.000</td>
+                                <td><span class="badge bg-warning">Đang xử lý</span></td>
+                            </tr>
+                            <tr>
+                                <td>#ORD003</td>
+                                <td>Lê Văn C</td>
+                                <td>₫800.000</td>
+                                <td><span class="badge bg-info">Chờ xác nhận</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Products -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-primary">Sản Phẩm Bán Chạy</h6>
+                <a asp-action="Products" class="btn btn-sm btn-primary">Xem tất cả</a>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush" id="topProducts">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">Yến Sào Tinh Chế</h6>
+                            <small class="text-muted">Bán: 45 sản phẩm</small>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">₫3.5M</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">Yến Sào Thô</h6>
+                            <small class="text-muted">Bán: 32 sản phẩm</small>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">₫1.5M</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">Yến Sào Chưng</h6>
+                            <small class="text-muted">Bán: 28 sản phẩm</small>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">₫2.2M</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Doanh thu (triệu VND)',
+                    data: [12, 19, 3, 5, 2, 3, 20],
+                    borderColor: 'rgb(46, 139, 87)',
+                    backgroundColor: 'rgba(46, 139, 87, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Orders Chart
+        const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+        const ordersChart = new Chart(ordersCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Hoàn thành', 'Đang xử lý', 'Chờ xác nhận'],
+                datasets: [{
+                    data: [55, 30, 15],
+                    backgroundColor: ['#2E8B57', '#3CB371', '#98D982']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Refresh data function
+        function refreshData() {
+            // TODO: Implement data refresh
+            alert('Đang refresh dữ liệu...');
+        }
+
+        // Export report function
+        function exportReport() {
+            // TODO: Implement export functionality
+            alert('Đang xuất báo cáo...');
+        }
+
+        // Auto refresh every 5 minutes
+        setInterval(function() {
+            // TODO: Auto refresh dashboard data
+            console.log('Auto refreshing dashboard data...');
+        }, 300000);
+    </script>
+}

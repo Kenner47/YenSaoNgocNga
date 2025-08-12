@@ -1,0 +1,12 @@
+﻿@{
+    // Kiểm tra nếu đang ở Admin area thì dùng AdminLayout
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    if (controller == "Admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+}

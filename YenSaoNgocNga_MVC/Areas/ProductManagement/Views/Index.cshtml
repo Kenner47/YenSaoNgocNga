@@ -1,0 +1,245 @@
+﻿@model IEnumerable<YenSaoNgocNga_MVC.Areas.ProductManagement.Models.ProductViewModel>
+@{
+    ViewData["Title"] = "Sản Phẩm Yến Sào";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var filter = ViewBag.Filter as YenSaoNgocNga_MVC.Areas.ProductManagement.Models.ProductFilterViewModel ?? new YenSaoNgocNga_MVC.Areas.ProductManagement.Models.ProductFilterViewModel();
+    var categories = ViewBag.Categories as IEnumerable<YenSaoNgocNga_MVC.Areas.ProductManagement.Models.CategoryViewModel> ?? new List<YenSaoNgocNga_MVC.Areas.ProductManagement.Models.CategoryViewModel>();
+}
+
+<!-- Product Header Section -->
+<section class="product-header py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="section-title">
+                    <i class="fas fa-leaf text-primary me-3"></i>
+                    Sản Phẩm Yến Sào
+                </h1>
+                <p class="section-subtitle">Khám phá bộ sưu tập yến sào cao cấp, tự nhiên 100%</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filter & Search Section -->
+<section class="filter-section py-4 bg-white shadow-sm">
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- Search Box -->
+            <div class="col-lg-4 mb-3">
+                <form asp-action="Search" method="get" class="search-form">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control" placeholder="Tìm kiếm sản phẩm..."
+                               value="@ViewBag.SearchQuery" />
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="col-lg-3 mb-3">
+                <select class="form-select" id="categoryFilter" onchange="filterByCategory(this.value)">
+                    <option value="">Tất cả danh mục</option>
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category.CategoryId" @(filter.CategoryId == category.CategoryId ? "selected" : "")>
+                            @category.CategoryName
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <!-- Sort Options -->
+            <div class="col-lg-3 mb-3">
+                <select class="form-select" id="sortFilter" onchange="sortProducts(this.value)">
+                    <option value="name-asc" @(filter.SortBy == "name" && filter.SortOrder == "asc" ? "selected" : "")>Tên A-Z</option>
+                    <option value="name-desc" @(filter.SortBy == "name" && filter.SortOrder == "desc" ? "selected" : "")>Tên Z-A</option>
+                    <option value="price-asc" @(filter.SortBy == "price" && filter.SortOrder == "asc" ? "selected" : "")>Giá thấp đến cao</option>
+                    <option value="price-desc" @(filter.SortBy == "price" && filter.SortOrder == "desc" ? "selected" : "")>Giá cao đến thấp</option>
+                    <option value="newest" @(filter.SortBy == "newest" ? "selected" : "")>Mới nhất</option>
+                </select>
+            </div>
+
+            <!-- Result Count -->
+            <div class="col-lg-2 mb-3">
+                <small class="text-muted">
+                    <strong>@Model.Count()</strong> sản phẩm
+                    @if (ViewBag.SearchQuery != null)
+                    {
+                        <br>
+                    
+                        <span class="text-primary">cho "@ViewBag.SearchQuery"</span>
+                    }
+                </small>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Grid Section -->
+<section class="products-grid py-5">
+    <div class="container">
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-search text-muted mb-3" style="font-size: 4rem;"></i>
+                <h4 class="text-muted">Không tìm thấy sản phẩm nào</h4>
+                <p class="text-muted">Hãy thử tìm kiếm với từ khóa khác</p>
+                <a asp-action="Index" class="btn btn-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Xem tất cả sản phẩm
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4" id="productsContainer">
+                @foreach (var product in Model)
+                {
+                    <div class="col-lg-4 col-md-6 product-item" data-category="@product.CategoryId" data-price="@product.Price">
+                        <div class="product-card h-100">
+                            <div class="product-image">
+                                <img src="@(!string.IsNullOrEmpty(product.ImageUrl) ? product.ImageUrl : "/images/no-image.jpg")"
+                                     alt="@product.ProductName" class="img-fluid"
+                                     onerror="this.src='/images/no-image.jpg'" />
+
+                                <!-- Stock Status Badge -->
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    @if (product.StockQuantity > 0)
+                                    {
+                                        <span class="badge bg-success">@product.StockStatus</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Hết hàng</span>
+                                    }
+                                </div>
+
+                                <!-- Product Actions -->
+                                <div class="product-overlay">
+                                    <div class="product-actions">
+                                        <a asp-action="Details" asp-route-id="@product.ProductId"
+                                           class="btn btn-primary btn-sm mb-2">
+                                            <i class="fas fa-eye me-1"></i> Xem chi tiết
+                                        </a>
+                                        @if (product.StockQuantity > 0)
+                                        {
+                                            <button class="btn btn-success btn-sm" onclick="addToCart(@product.ProductId)">
+                                                <i class="fas fa-cart-plus me-1"></i> Thêm vào giỏ
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="product-info">
+                                <div class="product-category">
+                                    <span class="badge bg-light text-dark">@product.CategoryName</span>
+                                </div>
+
+                                <h5 class="product-name">
+                                    <a asp-action="Details" asp-route-id="@product.ProductId" class="text-decoration-none">
+                                        @product.ProductName
+                                    </a>
+                                </h5>
+
+                                <p class="product-description text-muted">@product.Description</p>
+
+                                <!-- Product Details -->
+                                <div class="product-details mb-3">
+                                    <small class="text-muted d-block">
+                                        <i class="fas fa-weight me-1"></i> @product.FormattedWeight
+                                    </small>
+                                    <small class="text-muted d-block">
+                                        <i class="fas fa-map-marker-alt me-1"></i> @product.Origin
+                                    </small>
+                                    @if (!string.IsNullOrEmpty(product.Grade))
+                                    {
+                                        <small class="text-muted d-block">
+                                            <i class="fas fa-star me-1"></i> Loại @product.Grade
+                                        </small>
+                                    }
+                                </div>
+
+                                <div class="product-price">
+                                    <span class="current-price">@product.FormattedPrice</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Pagination (if needed) -->
+            <div class="text-center mt-5">
+                <button class="btn btn-outline-primary" onclick="loadMoreProducts()">
+                    <i class="fas fa-plus me-2"></i>Xem thêm sản phẩm
+                </button>
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // Filter by category
+        function filterByCategory(categoryId) {
+            const url = new URL(window.location);
+            if (categoryId) {
+                url.searchParams.set('CategoryId', categoryId);
+            } else {
+                url.searchParams.delete('CategoryId');
+            }
+            window.location.href = url.toString();
+        }
+
+        // Sort products
+        function sortProducts(sortValue) {
+            const [sortBy, sortOrder] = sortValue.split('-');
+            const url = new URL(window.location);
+            url.searchParams.set('SortBy', sortBy);
+            if (sortOrder) {
+                url.searchParams.set('SortOrder', sortOrder);
+            }
+            window.location.href = url.toString();
+        }
+
+        // Add to cart
+        function addToCart(productId) {
+            // TODO: Implement cart functionality
+            alert(`Đã thêm sản phẩm ${productId} vào giỏ hàng!`);
+        }
+
+        // Load more products (for pagination)
+        function loadMoreProducts() {
+            // TODO: Implement load more functionality
+            alert('Chức năng đang phát triển');
+        }
+
+        // Auto dismiss alerts
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+
+        // Product card animations
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+}

@@ -1,0 +1,369 @@
+﻿@model YenSaoNgocNga_MVC.Areas.ProductManagement.Models.ProductViewModel
+@{
+    ViewData["Title"] = Model.ProductName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var relatedProducts = ViewBag.RelatedProducts as IEnumerable<YenSaoNgocNga_MVC.Areas.ProductManagement.Models.ProductViewModel> ?? new List<YenSaoNgocNga_MVC.Areas.ProductManagement.Models.ProductViewModel>();
+}
+
+<!-- Breadcrumb -->
+<section class="breadcrumb-section py-3 bg-light">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-area="">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index">Sản phẩm</a></li>
+                <li class="breadcrumb-item"><a asp-action="Category" asp-route-id="@Model.CategoryId">@Model.CategoryName</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.ProductName</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- Product Details Section -->
+<section class="product-details py-5">
+    <div class="container">
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="row">
+            <!-- Product Images -->
+            <div class="col-lg-6 mb-4">
+                <div class="product-images">
+                    <div class="main-image mb-3">
+                        <img src="@(!string.IsNullOrEmpty(Model.ImageUrl) ? Model.ImageUrl : "/images/no-image.jpg")"
+                             alt="@Model.ProductName" class="img-fluid rounded shadow"
+                             id="mainProductImage"
+                             onerror="this.src='/images/no-image.jpg'" />
+                    </div>
+
+                    <!-- Thumbnail images (placeholder for future multiple images) -->
+                    <div class="thumbnail-images">
+                        <div class="row g-2">
+                            <div class="col-3">
+                                <img src="@(!string.IsNullOrEmpty(Model.ImageUrl) ? Model.ImageUrl : "/images/no-image.jpg")"
+                                     alt="@Model.ProductName" class="img-fluid rounded thumbnail-img active"
+                                     onclick="changeMainImage(this.src)" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Information -->
+            <div class="col-lg-6">
+                <div class="product-info">
+                    <!-- Category Badge -->
+                    <div class="mb-3">
+                        <a asp-action="Category" asp-route-id="@Model.CategoryId"
+                           class="badge bg-primary text-decoration-none">
+                            @Model.CategoryName
+                        </a>
+                    </div>
+
+                    <!-- Product Name -->
+                    <h1 class="product-title mb-3">@Model.ProductName</h1>
+
+                    <!-- Stock Status -->
+                    <div class="stock-status mb-3">
+                        @if (Model.StockQuantity > 0)
+                        {
+                            <span class="badge bg-success fs-6">
+                                <i class="fas fa-check me-1"></i>@Model.StockStatus (@Model.StockQuantity sản phẩm)
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger fs-6">
+                                <i class="fas fa-times me-1"></i>Hết hàng
+                            </span>
+                        }
+                    </div>
+
+                    <!-- Price -->
+                    <div class="product-price mb-4">
+                        <h2 class="price text-primary mb-0">@Model.FormattedPrice</h2>
+                    </div>
+
+                    <!-- Product Specifications -->
+                    <div class="product-specs mb-4">
+                        <h5>Thông tin sản phẩm:</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-weight text-primary me-2"></i>
+                                <strong>Trọng lượng:</strong> @Model.FormattedWeight
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                <strong>Xuất xứ:</strong> @Model.Origin
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-tag text-primary me-2"></i>
+                                <strong>Loại:</strong> @Model.ProductType
+                            </li>
+                            @if (!string.IsNullOrEmpty(Model.Grade))
+                            {
+                                <li class="mb-2">
+                                    <i class="fas fa-star text-primary me-2"></i>
+                                    <strong>Cấp độ:</strong> @Model.Grade
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                    <!-- Quantity Selector & Add to Cart -->
+                    @if (Model.StockQuantity > 0)
+                    {
+                        <div class="quantity-cart mb-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Số lượng:</label>
+                                    <div class="input-group">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity()">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" class="form-control text-center" id="quantity"
+                                               value="1" min="1" max="@Model.StockQuantity" />
+                                        <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity()">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <button class="btn btn-primary btn-lg w-100" onclick="addToCart(@Model.ProductId)">
+                                        <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ hàng
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <button class="btn btn-outline-primary w-100" onclick="addToWishlist(@Model.ProductId)">
+                                    <i class="fas fa-heart me-1"></i>Yêu thích
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-outline-secondary w-100" onclick="shareProduct()">
+                                    <i class="fas fa-share me-1"></i>Chia sẻ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Description Tab -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="product-tabs">
+                    <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
+                                    data-bs-target="#description" type="button" role="tab">
+                                <i class="fas fa-info-circle me-1"></i>Mô tả sản phẩm
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="specifications-tab" data-bs-toggle="tab"
+                                    data-bs-target="#specifications" type="button" role="tab">
+                                <i class="fas fa-list me-1"></i>Thông số kỹ thuật
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="reviews-tab" data-bs-toggle="tab"
+                                    data-bs-target="#reviews" type="button" role="tab">
+                                <i class="fas fa-star me-1"></i>Đánh giá (0)
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content p-4 border border-top-0" id="productTabsContent">
+                        <div class="tab-pane fade show active" id="description" role="tabpanel">
+                            <div class="description-content">
+                                <h5>Về sản phẩm @Model.ProductName</h5>
+                                <p>@Model.Description</p>
+
+                                <!-- Additional product benefits -->
+                                <h6>Lợi ích sức khỏe:</h6>
+                                <ul>
+                                    <li>Bổ sung collagen tự nhiên cho da</li>
+                                    <li>Tăng cường hệ miễn dịch</li>
+                                    <li>Hỗ trợ tiêu hóa và hấp thụ chất dinh dưỡng</li>
+                                    <li>Cải thiện giấc ngủ và giảm stress</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="specifications" role="tabpanel">
+                            <div class="specifications-content">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Tên sản phẩm</strong></td>
+                                            <td>@Model.ProductName</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Loại sản phẩm</strong></td>
+                                            <td>@Model.ProductType</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Trọng lượng</strong></td>
+                                            <td>@Model.FormattedWeight</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Xuất xứ</strong></td>
+                                            <td>@Model.Origin</td>
+                                        </tr>
+                                        @if (!string.IsNullOrEmpty(Model.Grade))
+                                        {
+                                            <tr>
+                                                <td><strong>Cấp độ</strong></td>
+                                                <td>@Model.Grade</td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td><strong>Bảo quản</strong></td>
+                                            <td>Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="reviews" role="tabpanel">
+                            <div class="reviews-content">
+                                <div class="text-center py-4">
+                                    <i class="fas fa-comments text-muted mb-3" style="font-size: 3rem;"></i>
+                                    <h5>Chưa có đánh giá nào</h5>
+                                    <p class="text-muted">Hãy là người đầu tiên đánh giá sản phẩm này!</p>
+                                    <button class="btn btn-primary">
+                                        <i class="fas fa-edit me-1"></i>Viết đánh giá
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Products Section -->
+@if (relatedProducts.Any())
+{
+    <section class="related-products py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-4">
+                    <h3>Sản phẩm liên quan</h3>
+                    <p class="text-muted">Các sản phẩm khác trong cùng danh mục</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                @foreach (var product in relatedProducts)
+                {
+                    <div class="col-lg-3 col-md-6">
+                        <div class="product-card h-100">
+                            <div class="product-image">
+                                <img src="@(!string.IsNullOrEmpty(product.ImageUrl) ? product.ImageUrl : "/images/no-image.jpg")"
+                                     alt="@product.ProductName" class="img-fluid" />
+                                <div class="product-overlay">
+                                    <a asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i> Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h6><a asp-action="Details" asp-route-id="@product.ProductId" class="text-decoration-none">@product.ProductName</a></h6>
+                                <div class="product-price">
+                                    <span class="current-price">@product.FormattedPrice</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@section Scripts {
+    <script>
+        // Quantity controls
+        function increaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            const currentValue = parseInt(quantityInput.value);
+            const maxValue = parseInt(quantityInput.max);
+
+            if (currentValue < maxValue) {
+                quantityInput.value = currentValue + 1;
+            }
+        }
+
+        function decreaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            const currentValue = parseInt(quantityInput.value);
+            const minValue = parseInt(quantityInput.min);
+
+            if (currentValue > minValue) {
+                quantityInput.value = currentValue - 1;
+            }
+        }
+
+        // Change main image
+        function changeMainImage(src) {
+            document.getElementById('mainProductImage').src = src;
+
+            // Update active thumbnail
+            document.querySelectorAll('.thumbnail-img').forEach(img => {
+                img.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // Add to cart
+        function addToCart(productId) {
+            const quantity = document.getElementById('quantity').value;
+            // TODO: Implement cart functionality
+            alert(`Đã thêm ${quantity} sản phẩm vào giỏ hàng!`);
+        }
+
+        // Add to wishlist
+        function addToWishlist(productId) {
+            // TODO: Implement wishlist functionality
+            alert('Đã thêm vào danh sách yêu thích!');
+        }
+
+        // Share product
+        function shareProduct() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '@Model.ProductName',
+                    text: '@Model.Description',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Đã copy link sản phẩm!');
+                });
+            }
+        }
+
+        // Auto dismiss alerts
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+    </script>
+}

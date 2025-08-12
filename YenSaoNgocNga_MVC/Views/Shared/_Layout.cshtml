@@ -26,12 +26,12 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index" asp-area="">
                                 <i class="fas fa-home me-1"></i> Trang Chủ
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#products">
+                            <a class="nav-link" asp-area="ProductManagement" asp-controller="Product" asp-action="Index">
                                 <i class="fas fa-leaf me-1"></i> Sản Phẩm
                             </a>
                         </li>
@@ -45,11 +45,36 @@
                                 <i class="fas fa-phone me-1"></i> Liên Hệ
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn btn-outline-primary ms-2 px-3" href="#login">
-                                <i class="fas fa-user me-1"></i> Đăng Nhập
-                            </a>
-                        </li>
+
+                        @* Check if user is logged in *@
+                        @if (Context.Session.GetString("UserName") != null)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user me-1"></i> @Context.Session.GetString("UserName")
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Thông tin cá nhân</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form asp-area="UserManagement" asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                                            <button type="submit" class="dropdown-item">
+                                                <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-primary ms-2 px-3" asp-area="UserManagement" asp-controller="Auth" asp-action="Login">
+                                    <i class="fas fa-user me-1"></i> Đăng Nhập
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
