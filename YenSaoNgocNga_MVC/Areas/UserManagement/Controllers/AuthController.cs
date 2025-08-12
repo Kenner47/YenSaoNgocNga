@@ -26,38 +26,12 @@ namespace YenSaoNgocNga_MVC.Areas.UserManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            _logger.LogInformation("🔥 LOGIN ATTEMPT: User {Username}", model?.Username ?? "NULL");
-            _logger.LogInformation("🔥 ModelState.IsValid: {IsValid}", ModelState.IsValid);
-
-            // Log all ModelState errors
-            foreach (var key in ModelState.Keys)
-            {
-                var state = ModelState[key];
-                _logger.LogInformation("🔥 ModelState[{Key}]: Value={Value}, Errors={ErrorCount}",
-                    key, state?.AttemptedValue ?? "NULL", state?.Errors.Count ?? 0);
-
-                if (state?.Errors.Count > 0)
-                {
-                    foreach (var error in state.Errors)
-                    {
-                        _logger.LogError("🔥 Error for {Key}: {ErrorMessage}", key, error.ErrorMessage);
-                    }
-                }
-            }
-
             if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("🔥 LOGIN FAILED: ModelState không hợp lệ");
                 return View(model);
-            }
 
             try
             {
-                _logger.LogInformation("🔥 Gọi API login...");
                 var result = await _userApiService.LoginAsync(model);
-
-                _logger.LogInformation("🔥 API Response: Success={IsSuccess}, Role={RoleName}",
-                    result.IsSuccess, result.RoleName);
 
                 if (result.IsSuccess)
                 {
@@ -68,67 +42,28 @@ namespace YenSaoNgocNga_MVC.Areas.UserManagement.Controllers
                     HttpContext.Session.SetString("UserRole", result.RoleName);
                     HttpContext.Session.SetString("UserId", result.UserId.ToString());
 
-                    _logger.LogInformation("🔥 Session saved. Role: {Role}", result.RoleName);
-
                     TempData["Success"] = "Đăng nhập thành công!";
 
-                    // 🔥 PHÂN QUYỀN: Redirect dựa trên Role
+                    // Redirect dựa trên Role
                     if (result.RoleName.Equals("Admin", StringComparison.OrdinalIgnoreCase) ||
                         result.RoleName.Equals("SuperAdmin", StringComparison.OrdinalIgnoreCase))
                     {
-                        _logger.LogInformation("🔥 Redirecting to Admin Dashboard");
                         return RedirectToAction("Dashboard", "Admin", new { area = "UserManagement" });
                     }
                     else
                     {
-                        _logger.LogInformation("🔥 Redirecting to Home for role: {Role}", result.RoleName);
                         return RedirectToAction("Index", "Home", new { area = "" });
                     }
                 }
 
-                _logger.LogWarning("🔥 LOGIN FAILED: {Message}", result.Message);
                 ModelState.AddModelError("", result.Message);
                 return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "🔥 LOGIN ERROR: {Message}", ex.Message);
+                _logger.LogError(ex, "Login error for user {Username}", model.Username);
                 ModelState.AddModelError("", "Đã xảy ra lỗi: " + ex.Message);
                 return View(model);
-            }
-        }
-
-        // 🔥 TEST ACTION - Xóa sau khi fix xong
-        [HttpPost]
-        public async Task<IActionResult> TestLogin(string username, string password)
-        {
-            _logger.LogInformation("🔥 TEST LOGIN: username={Username}, password={PasswordLength}",
-                username, password?.Length ?? 0);
-
-            var model = new LoginViewModel
-            {
-                Username = username ?? "admin",
-                Password = password ?? "admin123"
-            };
-
-            try
-            {
-                var result = await _userApiService.LoginAsync(model);
-                _logger.LogInformation("🔥 TEST Result: {IsSuccess}, {Message}, Role: {Role}",
-                    result.IsSuccess, result.Message, result.RoleName);
-
-                return Json(new
-                {
-                    success = result.IsSuccess,
-                    message = result.Message,
-                    role = result.RoleName,
-                    username = result.UserName
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "🔥 TEST ERROR");
-                return Json(new { success = false, message = ex.Message });
             }
         }
 

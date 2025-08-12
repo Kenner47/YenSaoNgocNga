@@ -18,37 +18,33 @@
 
                         @if (TempData["Success"] != null)
                         {
-                            <div class="alert alert-success">@TempData["Success"]</div>
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                @TempData["Success"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
                         }
 
                         @if (TempData["Error"] != null)
                         {
-                            <div class="alert alert-danger">@TempData["Error"]</div>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                @TempData["Error"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
                         }
 
                         @if (!ViewData.ModelState.IsValid)
                         {
                             <div class="alert alert-danger">
-                                <h6>Lỗi validation:</h6>
-                                @foreach (var error in ViewData.ModelState)
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
                                 {
-                                    <div><strong>@error.Key:</strong></div>
-                                    @foreach (var modelError in error.Value.Errors)
-                                    {
-                                        <div>- @modelError.ErrorMessage</div>
-                                    }
+                                    <div>@error.ErrorMessage</div>
                                 }
                             </div>
                         }
 
-                        <!-- 🔥 DEBUG BUTTON -->
-                        <div class="mb-3">
-                            <button type="button" class="btn btn-warning btn-sm" onclick="testApi()">
-                                🔥 Test API
-                            </button>
-                        </div>
-
-                        <form method="post" asp-action="Login" asp-controller="Auth" asp-area="UserManagement" id="loginForm">
+                        <form method="post" asp-action="Login" asp-controller="Auth" asp-area="UserManagement">
                             @Html.AntiForgeryToken()
 
                             <div class="mb-3">
@@ -58,7 +54,6 @@
                                 <input name="Username" id="Username" type="text"
                                        class="form-control form-control-lg"
                                        placeholder="Nhập tên đăng nhập"
-                                       value="admin"
                                        required />
                             </div>
 
@@ -66,11 +61,15 @@
                                 <label for="Password" class="form-label">
                                     <i class="fas fa-lock me-2"></i>Mật khẩu
                                 </label>
-                                <input name="Password" id="Password" type="password"
-                                       class="form-control form-control-lg"
-                                       placeholder="Nhập mật khẩu"
-                                       value="admin123"
-                                       required />
+                                <div class="input-group">
+                                    <input name="Password" id="Password" type="password"
+                                           class="form-control form-control-lg"
+                                           placeholder="Nhập mật khẩu"
+                                           required />
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+                                        <i class="fas fa-eye" id="passwordToggle"></i>
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="mb-3 form-check">
@@ -93,6 +92,12 @@
                                     Chưa có tài khoản? <strong>Đăng ký ngay</strong>
                                 </a>
                             </div>
+
+                            <hr class="my-4">
+
+                            <div class="text-center">
+                                <a href="#" class="text-muted small">Quên mật khẩu?</a>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -102,38 +107,31 @@
 </section>
 
 @section Scripts {
-    <script>
-        function testApi() {
-            console.log('🔥 Testing API...');
+    <partial name="_ValidationScriptsPartial" />
 
-            fetch('/UserManagement/Auth/TestLogin?username=admin&password=admin123', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('🔥 API Test Result:', data);
-                alert('API Test: ' + JSON.stringify(data, null, 2));
-            })
-            .catch(error => {
-                console.error('🔥 API Test Error:', error);
-                alert('API Test Error: ' + error);
-            });
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('Password');
+            const passwordToggle = document.getElementById('passwordToggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordToggle.classList.remove('fa-eye');
+                passwordToggle.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                passwordToggle.classList.remove('fa-eye-slash');
+                passwordToggle.classList.add('fa-eye');
+            }
         }
 
-        // Log form data before submit
+        // Auto dismiss alerts
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+
+        // Show loading on submit
         document.getElementById('loginForm').addEventListener('submit', function(e) {
-            console.log('🔥 Form submitting...');
-
-            // Get form data
-            const formData = new FormData(this);
-            for (let [key, value] of formData.entries()) {
-                console.log('🔥 FormData:', key, '=', value);
-            }
-
-            // Show loading
             document.getElementById('loginBtn').innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
             document.getElementById('loginBtn').disabled = true;
         });
