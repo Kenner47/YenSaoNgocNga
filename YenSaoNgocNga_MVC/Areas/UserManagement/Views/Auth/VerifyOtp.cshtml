@@ -1,0 +1,138 @@
+﻿@model YenSaoNgocNga_MVC.Areas.UserManagement.Models.VerifyOtpViewModel
+@{
+    ViewData["Title"] = "Xác Thực OTP";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="py-5 bg-light min-vh-100 d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-shield-alt text-success mb-3" style="font-size: 4rem;"></i>
+                            <h2 class="h3 mb-3">Xác Thực Tài Khoản</h2>
+                            <p class="text-muted">
+                                Chúng tôi đã gửi mã xác thực 6 chữ số đến email:<br>
+                                <strong>@Model.Email</strong>
+                            </p>
+                        </div>
+
+                        @if (TempData["Success"] != null)
+                        {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                @TempData["Success"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        }
+
+                        <form asp-action="VerifyOtp" method="post">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+
+                            <input asp-for="Email" type="hidden" />
+
+                            <div class="mb-4">
+                                <label asp-for="Otp" class="form-label">
+                                    <i class="fas fa-key me-2"></i>Mã OTP (6 chữ số)
+                                </label>
+                                <input asp-for="Otp" class="form-control form-control-lg text-center"
+                                       placeholder="000000" maxlength="6"
+                                       style="letter-spacing: 0.5rem; font-size: 1.5rem;"
+                                       onkeypress="return isNumber(event)"
+                                       oninput="formatOtp(this)" />
+                                <span asp-validation-for="Otp" class="text-danger small"></span>
+                            </div>
+
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-check me-2"></i>Xác Thực
+                                </button>
+                            </div>
+
+                            <div class="text-center">
+                                <p class="text-muted small mb-2">Không nhận được mã?</p>
+                                <button type="button" class="btn btn-link p-0" onclick="resendOtp()">
+                                    <i class="fas fa-redo me-1"></i>Gửi lại mã OTP
+                                </button>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="text-center">
+                                <a asp-action="Register" class="text-muted small">
+                                    <i class="fas fa-arrow-left me-1"></i>Quay lại đăng ký
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- OTP Timer -->
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>
+                        Mã OTP sẽ hết hạn sau: <span id="otpTimer" class="fw-bold text-warning">05:00</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // OTP Input formatting
+        function isNumber(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+
+        function formatOtp(input) {
+            // Auto-submit when 6 digits entered
+            if (input.value.length === 6) {
+                input.form.submit();
+            }
+        }
+
+        // OTP Timer
+        let timeLeft = 300; // 5 minutes
+        const timerElement = document.getElementById('otpTimer');
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft <= 60) {
+                timerElement.classList.remove('text-warning');
+                timerElement.classList.add('text-danger');
+            }
+
+            if (timeLeft <= 0) {
+                timerElement.textContent = 'Hết hạn';
+                timerElement.classList.add('text-danger');
+                return;
+            }
+
+            timeLeft--;
+            setTimeout(updateTimer, 1000);
+        }
+
+        updateTimer();
+
+        // Resend OTP
+        function resendOtp() {
+            // Call API to resend OTP
+            alert('Chức năng gửi lại OTP đang được phát triển');
+        }
+
+        // Auto focus on OTP input
+        document.querySelector('input[name="Otp"]').focus();
+    </script>
+}

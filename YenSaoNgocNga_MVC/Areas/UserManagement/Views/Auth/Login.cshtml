@@ -1,0 +1,139 @@
+﻿@model YenSaoNgocNga_MVC.Areas.UserManagement.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Đăng Nhập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="py-5 bg-light min-vh-100 d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-dove text-primary mb-3" style="font-size: 3rem;"></i>
+                            <h2 class="h3 mb-3">Đăng Nhập</h2>
+                            <p class="text-muted">Chào mừng bạn trở lại!</p>
+                        </div>
+
+                        @if (TempData["Success"] != null)
+                        {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                @TempData["Success"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        }
+
+                        @if (TempData["Error"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                @TempData["Error"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        }
+
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger">
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <div>@error.ErrorMessage</div>
+                                }
+                            </div>
+                        }
+
+                        <form method="post" asp-action="Login" asp-controller="Auth" asp-area="UserManagement">
+                            @Html.AntiForgeryToken()
+
+                            <div class="mb-3">
+                                <label for="Username" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Tên đăng nhập
+                                </label>
+                                <input name="Username" id="Username" type="text"
+                                       class="form-control form-control-lg"
+                                       placeholder="Nhập tên đăng nhập"
+                                       required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="Password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Mật khẩu
+                                </label>
+                                <div class="input-group">
+                                    <input name="Password" id="Password" type="password"
+                                           class="form-control form-control-lg"
+                                           placeholder="Nhập mật khẩu"
+                                           required />
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+                                        <i class="fas fa-eye" id="passwordToggle"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input name="RememberMe" id="RememberMe"
+                                       class="form-check-input" type="checkbox" value="true" />
+                                <input name="RememberMe" type="hidden" value="false" />
+                                <label for="RememberMe" class="form-check-label">
+                                    Ghi nhớ đăng nhập
+                                </label>
+                            </div>
+
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary btn-lg" id="loginBtn">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Đăng Nhập
+                                </button>
+                            </div>
+
+                            <div class="text-center">
+                                <a asp-action="Register" class="text-decoration-none">
+                                    Chưa có tài khoản? <strong>Đăng ký ngay</strong>
+                                </a>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="text-center">
+                                <a href="#" class="text-muted small">Quên mật khẩu?</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('Password');
+            const passwordToggle = document.getElementById('passwordToggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordToggle.classList.remove('fa-eye');
+                passwordToggle.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                passwordToggle.classList.remove('fa-eye-slash');
+                passwordToggle.classList.add('fa-eye');
+            }
+        }
+
+        // Auto dismiss alerts
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+
+        // Show loading on submit
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            document.getElementById('loginBtn').innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+            document.getElementById('loginBtn').disabled = true;
+        });
+    </script>
+}
