@@ -48,29 +48,36 @@
                             </button>
                         </div>
 
-                        <form asp-action="Login" method="post" id="loginForm">
+                        <form method="post" asp-action="Login" asp-controller="Auth" asp-area="UserManagement" id="loginForm">
+                            @Html.AntiForgeryToken()
+
                             <div class="mb-3">
-                                <label asp-for="Username" class="form-label">
+                                <label for="Username" class="form-label">
                                     <i class="fas fa-user me-2"></i>Tên đăng nhập
                                 </label>
-                                <input asp-for="Username" class="form-control form-control-lg"
-                                       placeholder="Nhập tên đăng nhập" value="admin" />
-                                <span asp-validation-for="Username" class="text-danger small"></span>
+                                <input name="Username" id="Username" type="text"
+                                       class="form-control form-control-lg"
+                                       placeholder="Nhập tên đăng nhập"
+                                       value="admin"
+                                       required />
                             </div>
 
                             <div class="mb-3">
-                                <label asp-for="Password" class="form-label">
+                                <label for="Password" class="form-label">
                                     <i class="fas fa-lock me-2"></i>Mật khẩu
                                 </label>
-                                <input asp-for="Password" type="password"
+                                <input name="Password" id="Password" type="password"
                                        class="form-control form-control-lg"
-                                       placeholder="Nhập mật khẩu" value="admin123" />
-                                <span asp-validation-for="Password" class="text-danger small"></span>
+                                       placeholder="Nhập mật khẩu"
+                                       value="admin123"
+                                       required />
                             </div>
 
                             <div class="mb-3 form-check">
-                                <input asp-for="RememberMe" class="form-check-input" type="checkbox" />
-                                <label asp-for="RememberMe" class="form-check-label">
+                                <input name="RememberMe" id="RememberMe"
+                                       class="form-check-input" type="checkbox" value="true" />
+                                <input name="RememberMe" type="hidden" value="false" />
+                                <label for="RememberMe" class="form-check-label">
                                     Ghi nhớ đăng nhập
                                 </label>
                             </div>
@@ -95,8 +102,6 @@
 </section>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-
     <script>
         function testApi() {
             console.log('🔥 Testing API...');
@@ -121,9 +126,16 @@
         // Log form data before submit
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             console.log('🔥 Form submitting...');
-            console.log('🔥 Username:', document.querySelector('input[name="Username"]').value);
-            console.log('🔥 Password:', document.querySelector('input[name="Password"]').value);
-            console.log('🔥 RememberMe:', document.querySelector('input[name="RememberMe"]').checked);
+
+            // Get form data
+            const formData = new FormData(this);
+            for (let [key, value] of formData.entries()) {
+                console.log('🔥 FormData:', key, '=', value);
+            }
+
+            // Show loading
+            document.getElementById('loginBtn').innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+            document.getElementById('loginBtn').disabled = true;
         });
     </script>
 }
