@@ -46,15 +46,24 @@
                             </a>
                         </li>
 
-                        @* Check if user is logged in *@
                         @if (Context.Session.GetString("UserName") != null)
                         {
+                            var userRole = Context.Session.GetString("UserRole");
+                            if (userRole != null && (userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase) || userRole.Equals("SuperAdmin", StringComparison.OrdinalIgnoreCase)))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="UserManagement" asp-controller="Admin" asp-action="Dashboard">
+                                        <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                                    </a>
+                                </li>
+                            }
+
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-user me-1"></i> @Context.Session.GetString("UserName")
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Thông tin cá nhân</a></li>
+                                    <li><a class="dropdown-item" asp-area="UserManagement" asp-controller="User" asp-action="Profile"><i class="fas fa-user me-2"></i>Thông tin cá nhân</a></li>
                                     <li><a class="dropdown-item" href="#"><i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>

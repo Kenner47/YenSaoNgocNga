@@ -12,6 +12,9 @@ namespace YenSaoNgocNga_MVC
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            // Add HttpContextAccessor
+            builder.Services.AddHttpContextAccessor();
+
             // Add Session support
             builder.Services.AddSession(options =>
             {

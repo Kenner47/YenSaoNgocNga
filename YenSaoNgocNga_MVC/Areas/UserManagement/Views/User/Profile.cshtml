@@ -1,0 +1,452 @@
+﻿@model YenSaoNgocNga_MVC.Areas.UserManagement.Models.UserProfileViewModel
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-4" style="margin-top: 60px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-8">
+            <!-- Profile Header -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-gradient-primary text-white">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-circle me-3">
+                            <i class="fas fa-user fa-2x"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0">@(Model?.FullName ?? "Người dùng")</h4>
+                            <small class="text-white-50">@(Model?.Username ?? "")</small>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge @(Model?.IsActive == true ? "bg-success" : "bg-danger")">
+                                @(Model?.IsActive == true ? "Đang hoạt động" : "Bị khóa")
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Display Success/Error Messages -->
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <!-- Profile Form -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        Chỉnh sửa thông tin cá nhân
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("UpdateProfile", "User", new { area = "UserManagement" }, FormMethod.Post, true, new { id = "profileForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.Id)
+                        @Html.HiddenFor(m => m.CreatedAt)
+                        @Html.HiddenFor(m => m.RoleName)
+                        @Html.HiddenFor(m => m.IsActive)
+                        @Html.HiddenFor(m => m.Username)
+
+                        <div class="row g-3">
+                            <!-- Thông tin cơ bản -->
+                            <div class="col-12">
+                                <h6 class="text-primary border-bottom pb-2 mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>Thông tin cơ bản
+                                </h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="Username" class="form-label fw-bold">Tên đăng nhập</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    @Html.TextBoxFor(m => m.Username, new { @class = "form-control", @readonly = "readonly" })
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="Email" class="form-label fw-bold">Email</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @type = "email", @required = "required" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="col-12">
+                                <label for="FullName" class="form-label fw-bold">Họ và tên</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                    @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", @required = "required" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Thông tin liên hệ -->
+                            <div class="col-12 mt-4">
+                                <h6 class="text-primary border-bottom pb-2 mb-3">
+                                    <i class="fas fa-address-book me-2"></i>Thông tin liên hệ
+                                </h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="PhoneNumber" class="form-label fw-bold">Số điện thoại</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", @type = "tel" })
+                                </div>
+                                @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="DateOfBirth" class="form-label fw-bold">Ngày sinh</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control", @type = "date" })
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="Sex" class="form-label fw-bold">Giới tính</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-venus-mars"></i></span>
+                                    @Html.DropDownListFor(m => m.Sex, new SelectList(new[]
+                                    {
+                                        new { Value = "", Text = "-- Chọn giới tính --" },
+                                                                new { Value = "Nam", Text = "Nam" },
+                                                                new { Value = "Nữ", Text = "Nữ" },
+                                                                new { Value = "Khác", Text = "Khác" }
+                                                                }, "Value", "Text"), new { @class = "form-select" })
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="Address" class="form-label fw-bold">Địa chỉ</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                @Html.TextAreaFor(m => m.Address, new { @class = "form-control", @rows = "3", @placeholder = "Nhập địa chỉ của bạn..." })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="col-12 mt-4">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Trở về
+                                </a>
+                                <button type="submit" class="btn btn-primary" id="updateBtn">
+                                    <i class="fas fa-save me-2"></i>
+                                    Cập nhật thông tin
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                                        }
+                </div>
+            </div>
+
+            <!-- Change Password Section -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0 text-center">
+                        <i class="fas fa-key me-2"></i>
+                        Bảo mật tài khoản
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <p class="text-muted mb-3">Để đảm bảo bảo mật tài khoản, bạn nên đổi mật khẩu định kỳ.</p>
+                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                        <i class="fas fa-key me-2"></i>
+                        Đổi mật khẩu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-key me-2"></i>
+                    Đổi mật khẩu
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu hiện tại <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="currentPassword" name="CurrentPassword" required />
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('currentPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="text-danger" id="currentPasswordError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu mới <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            <input type="password" class="form-control" id="newPassword" name="NewPassword" required minlength="6" />
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('newPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Mật khẩu phải có ít nhất 6 ký tự</small>
+                        <div class="text-danger" id="newPasswordError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Xác nhận mật khẩu mới <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-check"></i></span>
+                            <input type="password" class="form-control" id="confirmPassword" name="ConfirmPassword" required />
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('confirmPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="text-danger" id="confirmPasswordError"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="changePasswordBtn" onclick="changePassword()">
+                    <i class="fas fa-save me-2"></i>
+                    Đổi mật khẩu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Change password function
+        function changePassword() {
+            // Clear previous errors
+            clearErrors();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Client-side validation
+            let isValid = true;
+
+            if (!currentPassword) {
+                showError('currentPasswordError', 'Mật khẩu hiện tại không được để trống');
+                isValid = false;
+            }
+
+            if (!newPassword) {
+                showError('newPasswordError', 'Mật khẩu mới không được để trống');
+                isValid = false;
+            } else if (newPassword.length < 6) {
+                showError('newPasswordError', 'Mật khẩu phải có ít nhất 6 ký tự');
+                isValid = false;
+            }
+
+            if (!confirmPassword) {
+                showError('confirmPasswordError', 'Xác nhận mật khẩu không được để trống');
+                isValid = false;
+            } else if (newPassword !== confirmPassword) {
+                showError('confirmPasswordError', 'Mật khẩu xác nhận không khớp');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Disable button and show loading
+            const changeBtn = document.getElementById('changePasswordBtn');
+            const originalBtnText = changeBtn.innerHTML;
+            changeBtn.disabled = true;
+            changeBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('CurrentPassword', currentPassword);
+            formData.append('NewPassword', newPassword);
+            formData.append('ConfirmPassword', confirmPassword);
+
+            // Add anti-forgery token
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            formData.append('__RequestVerificationToken', token);
+
+            // Submit request
+            fetch('@Url.Action("ChangePassword", "User", new { area = "UserManagement" })', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Success
+                    showAlert('success', data.message);
+                    // Reset form and close modal
+                    document.getElementById('changePasswordForm').reset();
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
+                    modal.hide();
+                } else {
+                    // Error
+                    showAlert('danger', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', 'Có lỗi xảy ra khi đổi mật khẩu!');
+            })
+            .finally(() => {
+                // Re-enable button
+                changeBtn.disabled = false;
+                changeBtn.innerHTML = originalBtnText;
+            });
+        }
+
+        function clearErrors() {
+            document.getElementById('currentPasswordError').textContent = '';
+            document.getElementById('newPasswordError').textContent = '';
+            document.getElementById('confirmPasswordError').textContent = '';
+        }
+
+        function showError(elementId, message) {
+            document.getElementById(elementId).textContent = message;
+        }
+
+        function showAlert(type, message) {
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+
+            // Insert alert at the top of the container
+            const container = document.querySelector('.container .row .col-lg-7');
+            container.insertAdjacentHTML('afterbegin', alertHtml);
+
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                const alert = container.querySelector('.alert');
+                if (alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }
+            }, 5000);
+        }
+
+        // Form submission debugging
+        $(document).ready(function() {
+            $('#profileForm').on('submit', function(e) {
+                console.log('Form is being submitted...');
+
+                // Check if required fields are filled
+                var fullName = $('input[name="FullName"]').val();
+                var email = $('input[name="Email"]').val();
+
+                if (!fullName || !email) {
+                    e.preventDefault();
+                    alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+                    return false;
+                }
+            });
+
+            // Reset change password form when modal is hidden
+            $('#changePasswordModal').on('hidden.bs.modal', function () {
+                document.getElementById('changePasswordForm').reset();
+                clearErrors();
+            });
+        });
+    </script>
+}
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+    }
+
+    .avatar-circle {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        border-right: none;
+    }
+
+    .form-control:focus + .input-group-text,
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    /* Fix z-index issue for fixed header */
+    .container {
+        position: relative;
+        z-index: 1;
+    }
+
+    .card {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Password toggle button */
+    .input-group .btn-outline-secondary {
+        border-left: none;
+        background-color: #f8f9fa;
+    }
+
+        .input-group .btn-outline-secondary:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+        }
+</style>
