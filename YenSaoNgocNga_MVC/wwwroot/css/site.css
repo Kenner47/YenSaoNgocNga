@@ -1018,3 +1018,60 @@ html {
     .product-item:nth-child(6) {
         animation-delay: 0.6s;
     }
+
+/* Navigation Dropdown Styling */
+.navbar-nav .nav-link.dropdown-toggle {
+    position: relative;
+}
+
+    .navbar-nav .nav-link.dropdown-toggle::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 50%;
+        background-color: var(--primary-color);
+        transition: all 0.3s ease;
+        border-top: 0.0em solid;
+        border-right: 0.0em solid transparent;
+        border-bottom: 0;
+        border-left: 0.0em solid transparent;
+        vertical-align: 0.255em;
+        margin-left: 0.255em;
+    }
+
+    .navbar-nav .nav-link.dropdown-toggle:hover::after {
+        width: 100%;
+        left: 0;
+        border: none;
+        vertical-align: unset;
+        margin-left: unset;
+    }
+
+/* dropdown menu */
+.navbar-nav .dropdown-menu {
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin-top: 0.5rem;
+    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.navbar-nav .dropdown-item {
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+    color: var(--text-dark);
+}
+
+    .navbar-nav .dropdown-item:hover {
+        background: rgba(46, 139, 87, 0.1);
+        color: var(--primary-color);
+        transform: translateX(5px);
+    }
+
+    .navbar-nav .dropdown-item i {
+        width: 20px;
+        text-align: center;
+    }

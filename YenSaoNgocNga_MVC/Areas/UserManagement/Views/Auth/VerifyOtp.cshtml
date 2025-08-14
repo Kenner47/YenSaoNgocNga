@@ -4,82 +4,111 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<section class="py-5 bg-light min-vh-100 d-flex align-items-center">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-5 col-md-7">
-                <div class="card shadow-lg border-0">
-                    <div class="card-body p-5 text-center">
-                        <div class="mb-4">
-                            <i class="fas fa-shield-alt text-success mb-3" style="font-size: 4rem;"></i>
-                            <h2 class="h3 mb-3">Xác Thực Tài Khoản</h2>
-                            <p class="text-muted">
-                                Chúng tôi đã gửi mã xác thực 6 chữ số đến email:<br>
-                                <strong>@Model.Email</strong>
-                            </p>
+<div class="container py-4" style="margin-top: 60px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-shield-alt text-success mb-3" style="font-size: 4rem;"></i>
+                        <h2 class="h3 mb-3">Xác Thực Tài Khoản</h2>
+                        <p class="text-muted">
+                            Chúng tôi đã gửi mã xác thực 6 chữ số đến email:<br>
+                            <strong class="text-primary">@(Model?.Email ?? "")</strong>
+                        </p>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <small>Sau khi xác thực thành công, bạn sẽ được tự động đăng nhập và chuyển về trang chủ!</small>
                         </div>
-
-                        @if (TempData["Success"] != null)
-                        {
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <i class="fas fa-check-circle me-2"></i>
-                                @TempData["Success"]
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        }
-
-                        <form asp-action="VerifyOtp" method="post">
-                            <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
-
-                            <input asp-for="Email" type="hidden" />
-
-                            <div class="mb-4">
-                                <label asp-for="Otp" class="form-label">
-                                    <i class="fas fa-key me-2"></i>Mã OTP (6 chữ số)
-                                </label>
-                                <input asp-for="Otp" class="form-control form-control-lg text-center"
-                                       placeholder="000000" maxlength="6"
-                                       style="letter-spacing: 0.5rem; font-size: 1.5rem;"
-                                       onkeypress="return isNumber(event)"
-                                       oninput="formatOtp(this)" />
-                                <span asp-validation-for="Otp" class="text-danger small"></span>
-                            </div>
-
-                            <div class="d-grid mb-3">
-                                <button type="submit" class="btn btn-success btn-lg">
-                                    <i class="fas fa-check me-2"></i>Xác Thực
-                                </button>
-                            </div>
-
-                            <div class="text-center">
-                                <p class="text-muted small mb-2">Không nhận được mã?</p>
-                                <button type="button" class="btn btn-link p-0" onclick="resendOtp()">
-                                    <i class="fas fa-redo me-1"></i>Gửi lại mã OTP
-                                </button>
-                            </div>
-
-                            <hr class="my-4">
-
-                            <div class="text-center">
-                                <a asp-action="Register" class="text-muted small">
-                                    <i class="fas fa-arrow-left me-1"></i>Quay lại đăng ký
-                                </a>
-                            </div>
-                        </form>
                     </div>
-                </div>
 
-                <!-- OTP Timer -->
-                <div class="text-center mt-3">
-                    <small class="text-muted">
-                        <i class="fas fa-clock me-1"></i>
-                        Mã OTP sẽ hết hạn sau: <span id="otpTimer" class="fw-bold text-warning">05:00</span>
-                    </small>
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+
+                    @using (Html.BeginForm("VerifyOtp", "Auth", new { area = "UserManagement" }, FormMethod.Post, true, new { id = "otpForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.Email)
+
+                        <div class="mb-4">
+                            <label for="Otp" class="form-label">
+                                <i class="fas fa-key me-2"></i>Mã OTP (6 chữ số)
+                            </label>
+                            @Html.TextBoxFor(m => m.Otp, new {
+                            @class = "form-control form-control-lg text-center",
+                                                @placeholder = "000000",
+                                                @maxlength = "6",
+                                                @style = "letter-spacing: 0.5rem; font-size: 1.5rem;",
+                                                @onkeypress = "return isNumber(event)",
+                                                @oninput = "formatOtp(this)",
+                                                @required = "required"
+                                                })
+                        @Html.ValidationMessageFor(m => m.Otp, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-success btn-lg" id="verifyBtn">
+                            <i class="fas fa-check me-2"></i>Xác Thực & Đăng Nhập
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="text-muted small mb-2">Không nhận được mã?</p>
+                        <button type="button" class="btn btn-link p-0" id="resendBtn" onclick="resendOtp()">
+                            <i class="fas fa-redo me-1"></i>Gửi lại mã OTP
+                        </button>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <button type="button" class="btn btn-link text-muted small" onclick="goToRegister()">
+                            <i class="fas fa-arrow-left me-1"></i>Quay lại đăng ký
+                        </button>
+                    </div>
+                                        }
+                </div>
+            </div>
+
+            <!-- OTP Timer -->
+            <div class="text-center mt-3">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body py-2">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            Mã OTP sẽ hết hạn sau: <span id="otpTimer" class="fw-bold text-warning">05:00</span>
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
@@ -96,7 +125,21 @@
         function formatOtp(input) {
             // Auto-submit when 6 digits entered
             if (input.value.length === 6) {
-                input.form.submit();
+                setTimeout(() => {
+                    console.log('Auto-submitting OTP form...');
+                    input.form.submit();
+                }, 100);
+            }
+        }
+
+        // Navigate to Register page
+        function goToRegister() {
+            try {
+                const registerUrl = '@Url.Action("Register", "Auth", new { area = "UserManagement" })';
+                window.location.href = registerUrl;
+            } catch (e) {
+                console.error('Navigation failed:', e);
+                window.location.href = '/UserManagement/Auth/Register';
             }
         }
 
@@ -117,6 +160,9 @@
             if (timeLeft <= 0) {
                 timerElement.textContent = 'Hết hạn';
                 timerElement.classList.add('text-danger');
+                // Disable form
+                document.getElementById('verifyBtn').disabled = true;
+                document.getElementById('verifyBtn').innerHTML = '<i class="fas fa-times me-2"></i>Mã OTP đã hết hạn';
                 return;
             }
 
@@ -128,11 +174,121 @@
 
         // Resend OTP
         function resendOtp() {
-            // Call API to resend OTP
-            alert('Chức năng gửi lại OTP đang được phát triển');
+            const email = '@(Model?.Email ?? "")';
+            if (!email) {
+                showAlert('danger', 'Không tìm thấy email để gửi lại OTP!');
+                return;
+            }
+
+            const resendBtn = document.getElementById('resendBtn');
+
+            resendBtn.disabled = true;
+            resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang gửi...';
+
+            fetch('@Url.Action("ResendOtp", "Auth", new { area = "UserManagement" })', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', data.message);
+                    // Reset timer
+                    timeLeft = 300;
+                    timerElement.classList.remove('text-danger');
+                    timerElement.classList.add('text-warning');
+                    document.getElementById('verifyBtn').disabled = false;
+                    document.getElementById('verifyBtn').innerHTML = '<i class="fas fa-check me-2"></i>Xác Thực & Đăng Nhập';
+                } else {
+                    showAlert('danger', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', 'Có lỗi xảy ra khi gửi lại OTP!');
+            })
+            .finally(() => {
+                resendBtn.disabled = false;
+                resendBtn.innerHTML = '<i class="fas fa-redo me-1"></i>Gửi lại mã OTP';
+            });
         }
 
+        function showAlert(type, message) {
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+
+            const container = document.querySelector('.card-body');
+            container.insertAdjacentHTML('afterbegin', alertHtml);
+
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                const alert = container.querySelector('.alert');
+                if (alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }
+            }, 5000);
+        }
+
+        // Form submission handling
+        document.getElementById('otpForm').addEventListener('submit', function(e) {
+            console.log('OTP form is being submitted...');
+
+            // Validate OTP input
+            const otpInput = document.querySelector('input[name="Otp"]');
+            const otpValue = otpInput.value.trim();
+
+            if (!otpValue) {
+                e.preventDefault();
+                showAlert('danger', 'Vui lòng nhập mã OTP!');
+                return false;
+            }
+
+            if (otpValue.length !== 6) {
+                e.preventDefault();
+                showAlert('danger', 'Mã OTP phải có đúng 6 chữ số!');
+                return false;
+            }
+
+            // Show loading
+            const verifyBtn = document.getElementById('verifyBtn');
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xác thực...';
+        });
+
         // Auto focus on OTP input
-        document.querySelector('input[name="Otp"]').focus();
+        document.addEventListener('DOMContentLoaded', function() {
+            const otpInput = document.querySelector('input[name="Otp"]');
+            if (otpInput) {
+                otpInput.focus();
+            }
+        });
+
+        // Auto dismiss alerts
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
     </script>
+
+    <style>
+        /* Fix z-index issue for fixed header - same as Profile */
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
 }

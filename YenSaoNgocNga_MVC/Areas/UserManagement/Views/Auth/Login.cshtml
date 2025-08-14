@@ -4,107 +4,108 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<section class="py-5 bg-light min-vh-100 d-flex align-items-center">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-5 col-md-7">
-                <div class="card shadow-lg border-0">
-                    <div class="card-body p-5">
-                        <div class="text-center mb-4">
-                            <i class="fas fa-dove text-primary mb-3" style="font-size: 3rem;"></i>
-                            <h2 class="h3 mb-3">Đăng Nhập</h2>
-                            <p class="text-muted">Chào mừng bạn trở lại!</p>
+<div class="container py-4" style="margin-top: 60px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-dove text-primary mb-3" style="font-size: 3rem;"></i>
+                        <h2 class="h3 mb-3">Đăng Nhập</h2>
+                        <p class="text-muted">Chào mừng bạn trở lại!</p>
+                    </div>
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+
+                    <form method="post" asp-action="Login" asp-controller="Auth" asp-area="UserManagement" id="loginForm">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label for="Username" class="form-label">
+                                <i class="fas fa-user me-2"></i>Tên đăng nhập
+                            </label>
+                            <input name="Username" id="Username" type="text"
+                                   class="form-control form-control-lg"
+                                   placeholder="Nhập tên đăng nhập"
+                                   required />
                         </div>
 
-                        @if (TempData["Success"] != null)
-                        {
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <i class="fas fa-check-circle me-2"></i>
-                                @TempData["Success"]
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        }
-
-                        @if (TempData["Error"] != null)
-                        {
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <i class="fas fa-exclamation-circle me-2"></i>
-                                @TempData["Error"]
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        }
-
-                        @if (!ViewData.ModelState.IsValid)
-                        {
-                            <div class="alert alert-danger">
-                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                                {
-                                    <div>@error.ErrorMessage</div>
-                                }
-                            </div>
-                        }
-
-                        <form method="post" asp-action="Login" asp-controller="Auth" asp-area="UserManagement">
-                            @Html.AntiForgeryToken()
-
-                            <div class="mb-3">
-                                <label for="Username" class="form-label">
-                                    <i class="fas fa-user me-2"></i>Tên đăng nhập
-                                </label>
-                                <input name="Username" id="Username" type="text"
+                        <div class="mb-3">
+                            <label for="Password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Mật khẩu
+                            </label>
+                            <div class="input-group">
+                                <input name="Password" id="Password" type="password"
                                        class="form-control form-control-lg"
-                                       placeholder="Nhập tên đăng nhập"
+                                       placeholder="Nhập mật khẩu"
                                        required />
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="Password" class="form-label">
-                                    <i class="fas fa-lock me-2"></i>Mật khẩu
-                                </label>
-                                <div class="input-group">
-                                    <input name="Password" id="Password" type="password"
-                                           class="form-control form-control-lg"
-                                           placeholder="Nhập mật khẩu"
-                                           required />
-                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
-                                        <i class="fas fa-eye" id="passwordToggle"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="mb-3 form-check">
-                                <input name="RememberMe" id="RememberMe"
-                                       class="form-check-input" type="checkbox" value="true" />
-                                <input name="RememberMe" type="hidden" value="false" />
-                                <label for="RememberMe" class="form-check-label">
-                                    Ghi nhớ đăng nhập
-                                </label>
-                            </div>
-
-                            <div class="d-grid mb-3">
-                                <button type="submit" class="btn btn-primary btn-lg" id="loginBtn">
-                                    <i class="fas fa-sign-in-alt me-2"></i>Đăng Nhập
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+                                    <i class="fas fa-eye" id="passwordToggle"></i>
                                 </button>
                             </div>
+                        </div>
 
-                            <div class="text-center">
-                                <a asp-action="Register" class="text-decoration-none">
-                                    Chưa có tài khoản? <strong>Đăng ký ngay</strong>
-                                </a>
-                            </div>
+                        <div class="mb-3 form-check">
+                            <input name="RememberMe" id="RememberMe"
+                                   class="form-check-input" type="checkbox" value="true" />
+                            <input name="RememberMe" type="hidden" value="false" />
+                            <label for="RememberMe" class="form-check-label">
+                                Ghi nhớ đăng nhập
+                            </label>
+                        </div>
 
-                            <hr class="my-4">
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg" id="loginBtn">
+                                <i class="fas fa-sign-in-alt me-2"></i>Đăng Nhập
+                            </button>
+                        </div>
 
-                            <div class="text-center">
-                                <a href="#" class="text-muted small">Quên mật khẩu?</a>
-                            </div>
-                        </form>
-                    </div>
+                        <!-- Clean Register Link -->
+                        <div class="text-center">
+                            <button type="button" class="btn btn-link p-0 text-decoration-none register-btn"
+                                    onclick="goToRegister()" id="registerBtn">
+                                <span class="text-muted">Chưa có tài khoản? </span>
+                                <strong class="text-success">Đăng ký ngay</strong>
+                            </button>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="text-center">
+                            <a href="#" class="text-muted small">Quên mật khẩu?</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
@@ -125,6 +126,17 @@
             }
         }
 
+        // Function to navigate to Register page
+        function goToRegister() {
+            try {
+                const registerUrl = '@Url.Action("Register", "Auth", new { area = "UserManagement" })';
+                window.location.href = registerUrl;
+            } catch (e) {
+                console.error('Navigation failed:', e);
+                window.location.href = '/UserManagement/Auth/Register';
+            }
+        }
+
         // Auto dismiss alerts
         setTimeout(function() {
             $('.alert').fadeOut('slow');
@@ -132,8 +144,53 @@
 
         // Show loading on submit
         document.getElementById('loginForm').addEventListener('submit', function(e) {
-            document.getElementById('loginBtn').innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
-            document.getElementById('loginBtn').disabled = true;
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+            loginBtn.disabled = true;
         });
     </script>
+
+    <style>
+        /* Style for register button */
+        .register-btn {
+            border: none !important;
+            background: transparent !important;
+            cursor: pointer !important;
+            font-size: inherit;
+            line-height: inherit;
+        }
+
+            .register-btn:hover {
+                background-color: rgba(25, 135, 84, 0.1) !important;
+                border-radius: 5px;
+                padding: 5px 10px !important;
+                transition: all 0.2s ease;
+            }
+
+            .register-btn:focus {
+                outline: none;
+                box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+                border-radius: 5px;
+            }
+
+            .register-btn strong {
+                color: #198754 !important;
+            }
+
+            .register-btn:hover strong {
+                color: #146c43 !important;
+                text-decoration: underline;
+            }
+
+        /* Fix z-index issue for fixed header - same as Profile */
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
 }

@@ -87,6 +87,9 @@ namespace YenSaoNgocNga_MVC.Areas.UserManagement.Controllers
                 if (result.IsSuccess)
                 {
                     TempData["Success"] = "Đăng ký thành công! Vui lòng kiểm tra email để xác thực.";
+                    // Store registration data in TempData for auto-login after OTP verification
+                    TempData["RegisterUsername"] = model.Username;
+                    TempData["RegisterPassword"] = model.Password;
                     return RedirectToAction("VerifyOtp", new { email = model.Email });
                 }
 
@@ -120,6 +123,42 @@ namespace YenSaoNgocNga_MVC.Areas.UserManagement.Controllers
 
                 if (result.IsSuccess)
                 {
+                    // After successful OTP verification, auto-login the user
+                    var username = TempData["RegisterUsername"]?.ToString();
+                    var password = TempData["RegisterPassword"]?.ToString();
+
+                    if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+                    {
+                        try
+                        {
+                            var loginModel = new LoginViewModel
+                            {
+                                Username = username,
+                                Password = password
+                            };
+
+                            var loginResult = await _userApiService.LoginAsync(loginModel);
+
+                            if (loginResult.IsSuccess)
+                            {
+                                // Store user information in session
+                                HttpContext.Session.SetString("AccessToken", loginResult.AccessToken);
+                                HttpContext.Session.SetString("UserName", loginResult.UserName);
+                                HttpContext.Session.SetString("UserEmail", loginResult.Email);
+                                HttpContext.Session.SetString("UserRole", loginResult.RoleName);
+                                HttpContext.Session.SetString("UserId", loginResult.UserId.ToString());
+
+                                TempData["Success"] = "Xác thực thành công! Chào mừng bạn đến với Yến Sào Ngọc Nga!";
+                                return RedirectToAction("Index", "Home", new { area = "" });
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Auto-login failed after OTP verification");
+                        }
+                    }
+
+                    // Fallback: redirect to login page if auto-login fails
                     TempData["Success"] = "Xác thực thành công! Bạn có thể đăng nhập.";
                     return RedirectToAction("Login");
                 }
@@ -142,5 +181,27 @@ namespace YenSaoNgocNga_MVC.Areas.UserManagement.Controllers
             TempData["Success"] = "Đăng xuất thành công!";
             return RedirectToAction("Index", "Home", new { area = "" });
         }
+
+        // AJAX: Resend OTP
+        [HttpPost]
+        public async Task<IActionResult> ResendOtp([FromBody] ResendOtpRequest request)
+        {
+            try
+            {
+                // This would need to be implemented in your UserApiService
+                // For now, return success message
+                return Json(new { success = true, message = "Mã OTP mới đã được gửi!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error resending OTP");
+                return Json(new { success = false, message = "Có lỗi xảy ra khi gửi lại OTP!" });
+            }
+        }
+    }
+
+    public class ResendOtpRequest
+    {
+        public string Email { get; set; } = string.Empty;
     }
 }

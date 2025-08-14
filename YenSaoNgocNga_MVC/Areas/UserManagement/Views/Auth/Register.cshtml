@@ -4,109 +4,139 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<section class="py-5 bg-light min-vh-100 d-flex align-items-center">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-6 col-md-8">
-                <div class="card shadow-lg border-0">
-                    <div class="card-body p-5">
-                        <div class="text-center mb-4">
-                            <i class="fas fa-user-plus text-primary mb-3" style="font-size: 3rem;"></i>
-                            <h2 class="h3 mb-3">Đăng Ký Tài Khoản</h2>
-                            <p class="text-muted">Tạo tài khoản để trải nghiệm dịch vụ tuyệt vời</p>
+<div class="container py-4" style="margin-top: 60px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-plus text-primary mb-3" style="font-size: 3rem;"></i>
+                        <h2 class="h3 mb-3">Đăng Ký Tài Khoản</h2>
+                        <p class="text-muted">Tạo tài khoản để trải nghiệm dịch vụ tuyệt vời</p>
+                    </div>
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+
+                    @using (Html.BeginForm("Register", "Auth", new { area = "UserManagement" }, FormMethod.Post, true, new { id = "registerForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="Username" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Tên đăng nhập *
+                                </label>
+                                @Html.TextBoxFor(m => m.Username, new { @class = "form-control", @placeholder = "Nhập tên đăng nhập", @required = "required" })
+                                @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger small" })
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="FullName" class="form-label">
+                                    <i class="fas fa-id-card me-2"></i>Họ và tên *
+                                </label>
+                                @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", @placeholder = "Nhập họ và tên", @required = "required" })
+                                @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger small" })
+                            </div>
                         </div>
 
-                        <form asp-action="Register" method="post">
-                            <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+                        <div class="mb-3">
+                            <label for="Email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email *
+                            </label>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @type = "email", @placeholder = "Nhập email", @required = "required" })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                        </div>
 
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="Username" class="form-label">
-                                        <i class="fas fa-user me-2"></i>Tên đăng nhập *
-                                    </label>
-                                    <input asp-for="Username" class="form-control" placeholder="Nhập tên đăng nhập" />
-                                    <span asp-validation-for="Username" class="text-danger small"></span>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="FullName" class="form-label">
-                                        <i class="fas fa-id-card me-2"></i>Họ và tên *
-                                    </label>
-                                    <input asp-for="FullName" class="form-control" placeholder="Nhập họ và tên" />
-                                    <span asp-validation-for="FullName" class="text-danger small"></span>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label asp-for="Email" class="form-label">
-                                    <i class="fas fa-envelope me-2"></i>Email *
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="Password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Mật khẩu *
                                 </label>
-                                <input asp-for="Email" type="email" class="form-control" placeholder="Nhập email" />
-                                <span asp-validation-for="Email" class="text-danger small"></span>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="Password" class="form-label">
-                                        <i class="fas fa-lock me-2"></i>Mật khẩu *
-                                    </label>
-                                    <div class="input-group">
-                                        <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu" id="passwordInput" />
-                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('passwordInput', 'passwordToggle')">
-                                            <i class="fas fa-eye" id="passwordToggle"></i>
-                                        </button>
-                                    </div>
-                                    <span asp-validation-for="Password" class="text-danger small"></span>
+                                <div class="input-group">
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Nhập mật khẩu", @id = "passwordInput", @required = "required" })
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('passwordInput', 'passwordToggle')">
+                                        <i class="fas fa-eye" id="passwordToggle"></i>
+                                    </button>
                                 </div>
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+                            </div>
 
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="ConfirmPassword" class="form-label">
-                                        <i class="fas fa-lock me-2"></i>Xác nhận mật khẩu *
-                                    </label>
-                                    <div class="input-group">
-                                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Nhập lại mật khẩu" id="confirmPasswordInput" />
-                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirmPasswordInput', 'confirmPasswordToggle')">
-                                            <i class="fas fa-eye" id="confirmPasswordToggle"></i>
-                                        </button>
-                                    </div>
-                                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            <div class="col-md-6 mb-3">
+                                <label for="ConfirmPassword" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Xác nhận mật khẩu *
+                                </label>
+                                <div class="input-group">
+                                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", @placeholder = "Nhập lại mật khẩu", @id = "confirmPasswordInput", @required = "required" })
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirmPasswordInput', 'confirmPasswordToggle')">
+                                        <i class="fas fa-eye" id="confirmPasswordToggle"></i>
+                                    </button>
                                 </div>
+                                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger small" })
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label asp-for="PhoneNumber" class="form-label">
-                                    <i class="fas fa-phone me-2"></i>Số điện thoại
-                                </label>
-                                <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="Nhập số điện thoại" />
-                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
-                            </div>
+                        <div class="mb-3">
+                            <label for="PhoneNumber" class="form-label">
+                                <i class="fas fa-phone me-2"></i>Số điện thoại
+                            </label>
+                            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", @type = "tel", @placeholder = "Nhập số điện thoại" })
+                            @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger small" })
+                        </div>
 
-                            <div class="mb-4">
-                                <label asp-for="Address" class="form-label">
-                                    <i class="fas fa-map-marker-alt me-2"></i>Địa chỉ
-                                </label>
-                                <textarea asp-for="Address" class="form-control" rows="3" placeholder="Nhập địa chỉ"></textarea>
-                                <span asp-validation-for="Address" class="text-danger small"></span>
-                            </div>
+                        <div class="mb-4">
+                            <label for="Address" class="form-label">
+                                <i class="fas fa-map-marker-alt me-2"></i>Địa chỉ
+                            </label>
+                            @Html.TextAreaFor(m => m.Address, new { @class = "form-control", @rows = "3", @placeholder = "Nhập địa chỉ" })
+                            @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger small" })
+                        </div>
 
-                            <div class="d-grid mb-3">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-user-plus me-2"></i>Đăng Ký
-                                </button>
-                            </div>
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg" id="registerBtn">
+                                <i class="fas fa-user-plus me-2"></i>Đăng Ký
+                            </button>
+                        </div>
 
-                            <div class="text-center">
-                                <a asp-action="Login" class="text-decoration-none">
-                                    Đã có tài khoản? <strong>Đăng nhập ngay</strong>
-                                </a>
-                            </div>
-                        </form>
-                    </div>
+                        <!-- Clean Login Link với style giống như Register link ở Login page -->
+                        <div class="text-center">
+                            <button type="button" class="btn btn-link p-0 text-decoration-none login-btn"
+                                    onclick="goToLogin()" id="loginBtn">
+                                <span class="text-muted">Đã có tài khoản? </span>
+                                <strong class="text-primary">Đăng nhập ngay</strong>
+                            </button>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
@@ -127,6 +157,51 @@
             }
         }
 
+        // Function to navigate to Login page
+        function goToLogin() {
+            try {
+                const loginUrl = '@Url.Action("Login", "Auth", new { area = "UserManagement" })';
+                window.location.href = loginUrl;
+            } catch (e) {
+                console.error('Navigation failed:', e);
+                window.location.href = '/UserManagement/Auth/Login';
+            }
+        }
+
+        // Auto dismiss alerts
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+
+        // Form submission with validation
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            console.log('Form is being submitted...');
+
+            // Check required fields
+            var username = $('input[name="Username"]').val();
+            var fullName = $('input[name="FullName"]').val();
+            var email = $('input[name="Email"]').val();
+            var password = $('input[name="Password"]').val();
+            var confirmPassword = $('input[name="ConfirmPassword"]').val();
+
+            if (!username || !fullName || !email || !password || !confirmPassword) {
+                e.preventDefault();
+                alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Mật khẩu xác nhận không khớp!');
+                return false;
+            }
+
+            // Show loading
+            const registerBtn = document.getElementById('registerBtn');
+            registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xử lý...';
+            registerBtn.disabled = true;
+        });
+
         // Password strength indicator
         document.getElementById('passwordInput').addEventListener('input', function() {
             const password = this.value;
@@ -141,4 +216,48 @@
             // Add strength indicator visual feedback here if needed
         });
     </script>
+
+    <style>
+        /* Style for login button - same as register button in Login page */
+        .login-btn {
+            border: none !important;
+            background: transparent !important;
+            cursor: pointer !important;
+            font-size: inherit;
+            line-height: inherit;
+        }
+
+            .login-btn:hover {
+                background-color: rgba(13, 110, 253, 0.1) !important;
+                border-radius: 5px;
+                padding: 5px 10px !important;
+                transition: all 0.2s ease;
+            }
+
+            .login-btn:focus {
+                outline: none;
+                box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+                border-radius: 5px;
+            }
+
+            .login-btn strong {
+                color: #0d6efd !important;
+            }
+
+            .login-btn:hover strong {
+                color: #0b5ed7 !important;
+                text-decoration: underline;
+            }
+
+        /* Fix z-index issue for fixed header - same as Profile */
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
 }
