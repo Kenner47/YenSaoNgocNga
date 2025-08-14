@@ -42,7 +42,7 @@ namespace YenSaoNgocNga_MVC.Areas.UserManagement.Controllers
                     HttpContext.Session.SetString("UserRole", result.RoleName);
                     HttpContext.Session.SetString("UserId", result.UserId.ToString());
 
-                    TempData["Success"] = "Đăng nhập thành công!";
+                    //TempData["Success"] = "Đăng nhập thành công!";
 
                     // Redirect dựa trên Role
                     if (result.RoleName.Equals("Admin", StringComparison.OrdinalIgnoreCase) ||
@@ -178,7 +178,7 @@ namespace YenSaoNgocNga_MVC.Areas.UserManagement.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            TempData["Success"] = "Đăng xuất thành công!";
+            //TempData["Success"] = "Đăng xuất thành công!";
             return RedirectToAction("Index", "Home", new { area = "" });
         }
 
